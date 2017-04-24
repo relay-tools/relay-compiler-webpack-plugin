@@ -1,0 +1,50 @@
+{
+  "name": "relay-compiler-webpack-plugin",
+  "version": "0.1.0",
+  "description": "Automatically run the Relay Compiler from Webpack",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thusfresh/relay-compiler-webpack-plugin.git"
+  },
+  "main": "dist/index.js",
+  "jsnext/main": "src/index.js",
+  "author": "Tasveer Singh",
+  "license": "BSD-3-Clause",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "babel src --out-dir dist",
+    "flow": "flow",
+    "prepublish": "yarn run flow && yarn run clean && yarn run build"
+  },
+  "peerDependencies": {
+    "graphql": ">=0.9.0",
+    "relay-compiler": ">=1.0.0-rc.2",
+    "webpack": ">=2.3.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.24.1",
+    "babel-preset-env": "^1.4.0",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-stage-1": "^6.24.1",
+    "flow-bin": "^0.44.2",
+    "graphql": "^0.9.3",
+    "relay-compiler": "1.0.0-rc.2",
+    "rimraf": "^2.6.1",
+    "webpack": "^2.4.1"
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "node": 6.1
+          }
+        }
+      ],
+      "stage-1",
+      "flow"
+    ]
+  }
+}
