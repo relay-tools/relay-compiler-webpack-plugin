@@ -71,7 +71,7 @@ class RelayCompilerWebpackPlugin {
   apply(compiler) {
     var _this = this;
 
-    compiler.plugin('after-compile', (() => {
+    compiler.plugin('before-compile', (() => {
       var _ref = _asyncToGenerator(function* (compilation, callback) {
         try {
           const runner = new _relayCompiler.Runner({

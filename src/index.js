@@ -59,7 +59,7 @@ class RelayCompilerWebpackPlugin {
   }
 
   apply (compiler: Compiler) {
-    compiler.plugin('after-compile', async (compilation, callback) => {
+    compiler.plugin('before-compile', async (compilation, callback) => {
       try {
         const runner = new Runner({
           parserConfigs: this.parserConfigs,
