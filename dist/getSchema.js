@@ -26,7 +26,6 @@ function getSchema(schemaPath) {
     source = `
   directive @include(if: Boolean) on FRAGMENT | FIELD
   directive @skip(if: Boolean) on FRAGMENT | FIELD
-  directive @relay(pattern: Boolean, plural: Boolean) on FRAGMENT | FIELD
   ${source}
   `;
 
