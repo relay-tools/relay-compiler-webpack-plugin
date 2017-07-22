@@ -4,7 +4,7 @@
   "description": "Automatically run the Relay Compiler from Webpack",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thusfresh/relay-compiler-webpack-plugin.git"
+    "url": "https://github.com/danielholmes/relay-compiler-webpack-plugin"
   },
   "main": "dist/index.js",
   "jsnext/main": "src/index.js",
