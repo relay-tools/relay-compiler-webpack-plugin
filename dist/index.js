@@ -72,7 +72,7 @@ class RelayCompilerWebpackPlugin {
     var _this = this;
 
     compiler.plugin('before-compile', (() => {
-      var _ref = _asyncToGenerator(function* (compilation, callback) {
+      var _ref = _asyncToGenerator(function* (compilationParams, callback) {
         try {
           const runner = new _relayCompiler.Runner({
             parserConfigs: _this.parserConfigs,
@@ -83,10 +83,10 @@ class RelayCompilerWebpackPlugin {
 
           yield runner.compileAll();
         } catch (error) {
-          compilation.errors.push(error);
-        } finally {
-          callback();
+          callback(error);
+          return;
         }
+        callback();
       });
 
       return function (_x, _x2) {
