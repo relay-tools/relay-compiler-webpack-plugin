@@ -9,9 +9,9 @@ Well be annoyed no more! Simply install this plugin to automatically hook into W
   1. Add this to your project:
 
 ```sh
-  yarn add --dev relay-compiler-webpack-plugin
+  yarn add --dev @dhau/relay-compiler-webpack-plugin
   # Or if you're using npm
-  npm install --save-dev relay-compiler-webpack-plugin
+  npm install --save-dev @dhau/relay-compiler-webpack-plugin
 ```
 
   2. Add the plugin to your Webpack configuration:
