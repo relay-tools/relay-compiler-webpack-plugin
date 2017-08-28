@@ -25,6 +25,8 @@ class RelayCompilerWebpackPlugin {
   writerConfigs = {
     default: {
       getWriter: (...any: any) => {},
+      isGeneratedFile: (filePath: string) =>
+        filePath.endsWith('.js') && filePath.includes('__generated__'),
       parser: 'default',
     },
   }

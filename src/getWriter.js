@@ -17,7 +17,6 @@ export default function getWriter (baseDir: string) {
   return (onlyValidate: boolean, schema: GraphQLSchema, documents: Map<string, Object>, baseDocuments: Map<string, Object>) => {
     return new FileWriter({
       config: {
-        buildCommand: 'relay-compiler-webpack-plugin',
         formatModule: formatGeneratedModule,
         compilerTransforms: {
           codegenTransforms,
