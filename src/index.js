@@ -6,6 +6,7 @@ import fs from 'fs'
 import getSchema from './getSchema'
 import getFileFilter from './getFileFilter'
 import getWriter from './getWriter'
+import buildWatchmanExpression from './buildWatchmanExpression'
 
 import type { Compiler } from 'webpack'
 
@@ -54,6 +55,16 @@ class RelayCompilerWebpackPlugin {
     this.parserConfigs.default.baseDir = options.src
     this.parserConfigs.default.schema = options.schema
     this.parserConfigs.default.getSchema = () => getSchema(options.schema)
+    this.parserConfigs.default.watchmanExpression = buildWatchmanExpression({
+      extensions: [ 'js' ],
+      include: [ '**' ],
+      exclude: [
+        '**/node_modules/**',
+        '**/__mocks__/**',
+        '**/__tests__/**',
+        '**/__generated__/**',
+      ],
+    })
 
     this.writerConfigs.default.getWriter = getWriter(options.src)
 
