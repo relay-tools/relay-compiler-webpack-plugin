@@ -18,6 +18,7 @@ class RelayCompilerWebpackPlugin {
       getFileFilter,
       getParser: FileIRParser.getParser,
       getSchema: () => {},
+      watchmanExpression: [],
     },
   }
 
@@ -27,6 +28,8 @@ class RelayCompilerWebpackPlugin {
       parser: 'default',
     },
   }
+
+  reporter = {}
 
   constructor (options: {
     schema: string,
