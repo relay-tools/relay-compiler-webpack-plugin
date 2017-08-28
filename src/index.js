@@ -1,6 +1,6 @@
 // @flow
 
-import { Runner, FileIRParser } from 'relay-compiler'
+import { Runner, FileIRParser, ConsoleReporter } from 'relay-compiler'
 import fs from 'fs'
 
 import getSchema from './getSchema'
@@ -56,6 +56,8 @@ class RelayCompilerWebpackPlugin {
     this.parserConfigs.default.getSchema = () => getSchema(options.schema)
 
     this.writerConfigs.default.getWriter = getWriter(options.src)
+
+    this.reporter = new ConsoleReporter({ verbose: false });
   }
 
   apply (compiler: Compiler) {
@@ -64,6 +66,7 @@ class RelayCompilerWebpackPlugin {
         const runner = new Runner({
           parserConfigs: this.parserConfigs,
           writerConfigs: this.writerConfigs,
+          reporter: this.reporter,
           onlyValidate: false,
           skipPersist: true,
         })
