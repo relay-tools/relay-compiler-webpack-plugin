@@ -34,6 +34,13 @@ module.exports = {
 ```
 
   3. :tada:
+
+### Gotchas
+
+If there are multiple versions of GraphQL in your dependency tree it will cause schema validation errors. To get around
+this, ensure you have the same graphql version as your relay-compiler version depends on. To assist this you can 
+[install dependencies as flat](https://yarnpkg.com/lang/en/docs/cli/install/#toc-yarn-install-flat) which ensures only 
+one version of each dependency.
   
 ### TODOs
 
