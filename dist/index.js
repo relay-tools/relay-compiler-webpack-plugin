@@ -18,6 +18,10 @@ var _getWriter = require('./getWriter');
 
 var _getWriter2 = _interopRequireDefault(_getWriter);
 
+var _buildWatchmanExpression = require('./buildWatchmanExpression');
+
+var _buildWatchmanExpression2 = _interopRequireDefault(_buildWatchmanExpression);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -31,15 +35,18 @@ class RelayCompilerWebpackPlugin {
         baseDir: '',
         getFileFilter: _getFileFilter2.default,
         getParser: _relayCompiler.FileIRParser.getParser,
-        getSchema: () => {}
+        getSchema: () => {},
+        watchmanExpression: []
       }
     };
     this.writerConfigs = {
       default: {
         getWriter: (...any) => {},
+        isGeneratedFile: filePath => filePath.endsWith('.js') && filePath.includes('__generated__'),
         parser: 'default'
       }
     };
+    this.reporter = {};
 
     if (!options) {
       throw new Error('You must provide options to RelayCompilerWebpackPlugin.');
@@ -64,8 +71,15 @@ class RelayCompilerWebpackPlugin {
     this.parserConfigs.default.baseDir = options.src;
     this.parserConfigs.default.schema = options.schema;
     this.parserConfigs.default.getSchema = () => (0, _getSchema2.default)(options.schema);
+    this.parserConfigs.default.watchmanExpression = (0, _buildWatchmanExpression2.default)({
+      extensions: ['js'],
+      include: ['**'],
+      exclude: ['**/node_modules/**', '**/__mocks__/**', '**/__tests__/**', '**/__generated__/**']
+    });
 
     this.writerConfigs.default.getWriter = (0, _getWriter2.default)(options.src);
+
+    this.reporter = new _relayCompiler.ConsoleReporter({ verbose: false });
   }
 
   apply(compiler) {
@@ -77,6 +91,7 @@ class RelayCompilerWebpackPlugin {
           const runner = new _relayCompiler.Runner({
             parserConfigs: _this.parserConfigs,
             writerConfigs: _this.writerConfigs,
+            reporter: _this.reporter,
             onlyValidate: false,
             skipPersist: true
           });

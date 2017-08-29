@@ -26,6 +26,7 @@ function getSchema(schemaPath) {
     source = `
   directive @include(if: Boolean) on FRAGMENT | FIELD
   directive @skip(if: Boolean) on FRAGMENT | FIELD
+
   ${source}
   `;
 
@@ -34,6 +35,7 @@ function getSchema(schemaPath) {
     throw new Error(`
 Error loading schema. Expected the schema to be a .graphql or a .json
 file, describing your GraphQL server's API. Error detail:
+
 ${error.stack}
     `.trim());
   }

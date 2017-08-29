@@ -16,8 +16,8 @@ var _path2 = _interopRequireDefault(_path);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function getFileFilter(baseDir) {
-  return filename => {
-    const fullPath = _path2.default.join(baseDir, filename);
+  return file => {
+    const fullPath = _path2.default.join(baseDir, file.relPath);
     const stats = _fs2.default.statSync(fullPath);
 
     if (stats.isFile()) {

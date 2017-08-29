@@ -20,6 +20,7 @@ export default function getSchema(schemaPath: string): GraphQLSchema {
     source = `
   directive @include(if: Boolean) on FRAGMENT | FIELD
   directive @skip(if: Boolean) on FRAGMENT | FIELD
+
   ${source}
   `
 
@@ -28,6 +29,7 @@ export default function getSchema(schemaPath: string): GraphQLSchema {
     throw new Error(`
 Error loading schema. Expected the schema to be a .graphql or a .json
 file, describing your GraphQL server's API. Error detail:
+
 ${error.stack}
     `.trim())
   }
