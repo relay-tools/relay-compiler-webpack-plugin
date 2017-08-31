@@ -1,6 +1,6 @@
 {
   "name": "@dhau/relay-compiler-webpack-plugin",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Automatically run the Relay Compiler from Webpack",
   "repository": {
     "type": "git",
