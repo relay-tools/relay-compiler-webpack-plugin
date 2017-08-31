@@ -7,6 +7,7 @@ import getSchema from './getSchema'
 import getFileFilter from './getFileFilter'
 import getWriter from './getWriter'
 import buildWatchmanExpression from './buildWatchmanExpression'
+import getFilepathsFromGlob from './getFilepathsFromGlob'
 
 import type { Compiler } from 'webpack'
 
@@ -18,7 +19,8 @@ class RelayCompilerWebpackPlugin {
       getFileFilter,
       getParser: FileIRParser.getParser,
       getSchema: () => {},
-      watchmanExpression: [],
+      watchmanExpression: null,
+      filepaths: null,
     },
   }
 
@@ -36,6 +38,7 @@ class RelayCompilerWebpackPlugin {
   constructor (options: {
     schema: string,
     src: string,
+    watchman: boolean,
   }) {
     if (!options) {
       throw new Error('You must provide options to RelayCompilerWebpackPlugin.')
@@ -57,10 +60,8 @@ class RelayCompilerWebpackPlugin {
       throw new Error('Could not find your `src` path. Have you provided a fully resolved path?')
     }
 
-    this.parserConfigs.default.baseDir = options.src
-    this.parserConfigs.default.schema = options.schema
-    this.parserConfigs.default.getSchema = () => getSchema(options.schema)
-    this.parserConfigs.default.watchmanExpression = buildWatchmanExpression({
+    const watchman = options.watchman !== undefined ? options.watchman : true
+    const fileOptions = {
       extensions: [ 'js' ],
       include: [ '**' ],
       exclude: [
@@ -69,7 +70,13 @@ class RelayCompilerWebpackPlugin {
         '**/__tests__/**',
         '**/__generated__/**',
       ],
-    })
+    }
+
+    this.parserConfigs.default.baseDir = options.src
+    this.parserConfigs.default.schema = options.schema
+    this.parserConfigs.default.getSchema = () => getSchema(options.schema)
+    this.parserConfigs.default.watchmanExpression = options.watchman ? buildWatchmanExpression(fileOptions) : null
+    this.parserConfigs.default.filepaths = options.watchman ? null : getFilepathsFromGlob(options.src, fileOptions)
 
     this.writerConfigs.default.getWriter = getWriter(options.src)
 
