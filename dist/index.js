@@ -74,8 +74,9 @@ class RelayCompilerWebpackPlugin {
     }
 
     const watchman = options.watchman !== undefined ? options.watchman : true;
+    const extensions = options.extensions !== undefined ? options.extensions : ['js'];
     const fileOptions = {
-      extensions: ['js'],
+      extensions,
       include: ['**'],
       exclude: ['**/node_modules/**', '**/__mocks__/**', '**/__tests__/**', '**/__generated__/**']
     };
