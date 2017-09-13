@@ -38,6 +38,7 @@ class RelayCompilerWebpackPlugin {
   constructor (options: {
     schema: string,
     src: string,
+    extensions: Array<string>,
     watchman: boolean,
   }) {
     if (!options) {
@@ -61,8 +62,9 @@ class RelayCompilerWebpackPlugin {
     }
 
     const watchman = options.watchman !== undefined ? options.watchman : true
+    const extensions = options.extensions !== undefined ? options.extensions : [ 'js' ]
     const fileOptions = {
-      extensions: [ 'js' ],
+      extensions,
       include: [ '**' ],
       exclude: [
         '**/node_modules/**',
