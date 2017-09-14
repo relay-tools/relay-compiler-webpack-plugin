@@ -39,6 +39,8 @@ class RelayCompilerWebpackPlugin {
     schema: string,
     src: string,
     extensions: Array<string>,
+    include: Array<String>,
+    exclude: Array<String>,
     watchman: boolean,
   }) {
     if (!options) {
@@ -63,15 +65,18 @@ class RelayCompilerWebpackPlugin {
 
     const watchman = options.watchman !== undefined ? options.watchman : true
     const extensions = options.extensions !== undefined ? options.extensions : [ 'js' ]
+    const include = options.include !== undefined ? options.include : [ '**' ]
+    const exclude = options.exclude !== undefined ? options.exclude : [
+      '**/node_modules/**',
+      '**/__mocks__/**',
+      '**/__tests__/**',
+      '**/__generated__/**',
+    ]
+
     const fileOptions = {
       extensions,
-      include: [ '**' ],
-      exclude: [
-        '**/node_modules/**',
-        '**/__mocks__/**',
-        '**/__tests__/**',
-        '**/__generated__/**',
-      ],
+      include,
+      exclude,
     }
 
     this.parserConfigs.default.baseDir = options.src
