@@ -82,8 +82,8 @@ class RelayCompilerWebpackPlugin {
     this.parserConfigs.default.baseDir = options.src
     this.parserConfigs.default.schema = options.schema
     this.parserConfigs.default.getSchema = () => getSchema(options.schema)
-    this.parserConfigs.default.watchmanExpression = options.watchman ? buildWatchmanExpression(fileOptions) : null
-    this.parserConfigs.default.filepaths = options.watchman ? null : getFilepathsFromGlob(options.src, fileOptions)
+    this.parserConfigs.default.watchmanExpression = watchman ? buildWatchmanExpression(fileOptions) : null
+    this.parserConfigs.default.filepaths = watchman ? null : getFilepathsFromGlob(options.src, fileOptions)
 
     this.writerConfigs.default.getWriter = getWriter(options.src)
 
