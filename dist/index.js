@@ -92,7 +92,7 @@ class RelayCompilerWebpackPlugin {
 
     this.writerConfigs.default.getWriter = (0, _getWriter2.default)(options.src);
 
-    this.reporter = new _relayCompiler.ConsoleReporter({ verbose: false });
+    this.reporter = options.reporter ? options.reporter : new _relayCompiler.ConsoleReporter({ verbose: false });
   }
 
   apply(compiler) {

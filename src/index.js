@@ -42,6 +42,7 @@ class RelayCompilerWebpackPlugin {
     include: Array<String>,
     exclude: Array<String>,
     watchman: boolean,
+    reporter: {reportError: (area: string, error: string) => void},
   }) {
     if (!options) {
       throw new Error('You must provide options to RelayCompilerWebpackPlugin.')
@@ -87,7 +88,7 @@ class RelayCompilerWebpackPlugin {
 
     this.writerConfigs.default.getWriter = getWriter(options.src)
 
-    this.reporter = new ConsoleReporter({ verbose: false });
+    this.reporter = options.reporter ? options.reporter : new ConsoleReporter({ verbose: false });
   }
 
   apply (compiler: Compiler) {
