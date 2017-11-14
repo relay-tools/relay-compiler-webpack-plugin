@@ -8,7 +8,3 @@ node_js:
   - "6"
   - "7"
   - "8"
-
-script:
-  - "yarn flow"
-  - "yarn build"
