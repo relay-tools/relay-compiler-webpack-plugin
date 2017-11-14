@@ -1,0 +1,14 @@
+language: node_js
+
+cache:
+  yarn: true
+
+node_js:
+  - "iojs"
+  - "6"
+  - "7"
+  - "8"
+
+script:
+  - "yarn flow"
+  - "yarn build"
