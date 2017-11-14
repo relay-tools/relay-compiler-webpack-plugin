@@ -1,7 +1,11 @@
 [ignore]
 
 [include]
+<PROJECT_DIR>/src
 
 [libs]
 
 [options]
+
+[version]
+^0.59.0
