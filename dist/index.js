@@ -98,29 +98,17 @@ class RelayCompilerWebpackPlugin {
   apply(compiler) {
     var _this = this;
 
-    compiler.plugin('before-compile', (() => {
-      var _ref = _asyncToGenerator(function* (compilationParams, callback) {
-        try {
-          const runner = new _relayCompiler.Runner({
-            parserConfigs: _this.parserConfigs,
-            writerConfigs: _this.writerConfigs,
-            reporter: _this.reporter,
-            onlyValidate: false,
-            skipPersist: true
-          });
-
-          yield runner.compileAll();
-        } catch (error) {
-          callback(error);
-          return;
-        }
-        callback();
+    compiler.plugin('compile', _asyncToGenerator(function* () {
+      const runner = new _relayCompiler.Runner({
+        parserConfigs: _this.parserConfigs,
+        writerConfigs: _this.writerConfigs,
+        reporter: _this.reporter,
+        onlyValidate: false,
+        skipPersist: true
       });
 
-      return function (_x, _x2) {
-        return _ref.apply(this, arguments);
-      };
-    })());
+      yield runner.compileAll();
+    }));
   }
 }
 
