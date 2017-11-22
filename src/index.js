@@ -92,22 +92,16 @@ class RelayCompilerWebpackPlugin {
   }
 
   apply (compiler: Compiler) {
-    compiler.plugin('before-compile', async (compilationParams, callback) => {
-      try {
-        const runner = new Runner({
-          parserConfigs: this.parserConfigs,
-          writerConfigs: this.writerConfigs,
-          reporter: this.reporter,
-          onlyValidate: false,
-          skipPersist: true,
-        })
+    compiler.plugin('compile', async () => {
+      const runner = new Runner({
+        parserConfigs: this.parserConfigs,
+        writerConfigs: this.writerConfigs,
+        reporter: this.reporter,
+        onlyValidate: false,
+        skipPersist: true,
+      })
 
-        await runner.compileAll()
-      } catch (error) {
-        callback(error)
-        return
-      }
-      callback()
+      await runner.compileAll()
     })
   }
 }
