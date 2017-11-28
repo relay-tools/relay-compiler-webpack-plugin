@@ -31,15 +31,12 @@ class RelayCompilerWebpackPlugin {
     },
   }
 
-  reporter = {}
-
   constructor (options: {
     schema: string,
     src: string,
     extensions: Array<string>,
     include: Array<String>,
     exclude: Array<String>,
-    reporter: {reportError: (area: string, error: string) => void},
   }) {
     if (!options) {
       throw new Error('You must provide options to RelayCompilerWebpackPlugin.')
@@ -82,27 +79,34 @@ class RelayCompilerWebpackPlugin {
     this.parserConfigs.default.filepaths = getFilepathsFromGlob(options.src, fileOptions)
 
     this.writerConfigs.default.getWriter = getWriter(options.src)
-
-    this.reporter = options.reporter ? options.reporter : new ConsoleReporter({ verbose: false });
   }
 
   apply (compiler: Compiler) {
     compiler.plugin('before-compile', async (compilationParams, callback) => {
+      const errors = []
       try {
+        const reporter = {
+          reportError: (area, error) => errors.push(error)
+        }
+
         const runner = new Runner({
           parserConfigs: this.parserConfigs,
           writerConfigs: this.writerConfigs,
-          reporter: this.reporter,
+          reporter: reporter,
           onlyValidate: false,
           skipPersist: true,
         })
 
         await runner.compileAll()
       } catch (error) {
-        callback(error)
-        return
+        errors.push(error)
       }
-      callback()
+
+      if (errors.length) {
+        callback(errors[0])
+      } else {
+        callback()
+      }
     })
   }
 }

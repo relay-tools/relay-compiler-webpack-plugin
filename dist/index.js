@@ -46,7 +46,6 @@ class RelayCompilerWebpackPlugin {
         parser: 'default'
       }
     };
-    this.reporter = {};
 
     if (!options) {
       throw new Error('You must provide options to RelayCompilerWebpackPlugin.');
@@ -84,8 +83,6 @@ class RelayCompilerWebpackPlugin {
     this.parserConfigs.default.filepaths = (0, _getFilepathsFromGlob2.default)(options.src, fileOptions);
 
     this.writerConfigs.default.getWriter = (0, _getWriter2.default)(options.src);
-
-    this.reporter = options.reporter ? options.reporter : new _relayCompiler.ConsoleReporter({ verbose: false });
   }
 
   apply(compiler) {
@@ -93,21 +90,32 @@ class RelayCompilerWebpackPlugin {
 
     compiler.plugin('before-compile', (() => {
       var _ref = _asyncToGenerator(function* (compilationParams, callback) {
+        const errors = [];
         try {
+          const reporter = {
+            reportError: function reportError(area, error) {
+              return errors.push(error);
+            }
+          };
+
           const runner = new _relayCompiler.Runner({
             parserConfigs: _this.parserConfigs,
             writerConfigs: _this.writerConfigs,
-            reporter: _this.reporter,
+            reporter: reporter,
             onlyValidate: false,
             skipPersist: true
           });
 
           yield runner.compileAll();
         } catch (error) {
-          callback(error);
-          return;
+          errors.push(error);
         }
-        callback();
+
+        if (errors.length) {
+          callback(errors[0]);
+        } else {
+          callback();
+        }
       });
 
       return function (_x, _x2) {
