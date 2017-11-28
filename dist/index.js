@@ -18,10 +18,6 @@ var _getWriter = require('./getWriter');
 
 var _getWriter2 = _interopRequireDefault(_getWriter);
 
-var _buildWatchmanExpression = require('./buildWatchmanExpression');
-
-var _buildWatchmanExpression2 = _interopRequireDefault(_buildWatchmanExpression);
-
 var _getFilepathsFromGlob = require('./getFilepathsFromGlob');
 
 var _getFilepathsFromGlob2 = _interopRequireDefault(_getFilepathsFromGlob);
@@ -40,7 +36,6 @@ class RelayCompilerWebpackPlugin {
         getFileFilter: _getFileFilter2.default,
         getParser: _relayCompiler.FileIRParser.getParser,
         getSchema: () => {},
-        watchmanExpression: null,
         filepaths: null
       }
     };
@@ -72,7 +67,6 @@ class RelayCompilerWebpackPlugin {
       throw new Error('Could not find your `src` path. Have you provided a fully resolved path?');
     }
 
-    const watchman = options.watchman !== undefined ? options.watchman : true;
     const extensions = options.extensions !== undefined ? options.extensions : ['js'];
     const include = options.include !== undefined ? options.include : ['**'];
     const exclude = options.exclude !== undefined ? options.exclude : ['**/node_modules/**', '**/__mocks__/**', '**/__tests__/**', '**/__generated__/**'];
@@ -86,8 +80,7 @@ class RelayCompilerWebpackPlugin {
     this.parserConfigs.default.baseDir = options.src;
     this.parserConfigs.default.schema = options.schema;
     this.parserConfigs.default.getSchema = () => (0, _getSchema2.default)(options.schema);
-    this.parserConfigs.default.watchmanExpression = watchman ? (0, _buildWatchmanExpression2.default)(fileOptions) : null;
-    this.parserConfigs.default.filepaths = watchman ? null : (0, _getFilepathsFromGlob2.default)(options.src, fileOptions);
+    this.parserConfigs.default.filepaths = (0, _getFilepathsFromGlob2.default)(options.src, fileOptions);
 
     this.writerConfigs.default.getWriter = (0, _getWriter2.default)(options.src);
   }
