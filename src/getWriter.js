@@ -1,5 +1,3 @@
-// @flow
-
 import { FileWriter, IRTransforms } from 'relay-compiler'
 import formatGeneratedModule from 'relay-compiler/lib/formatGeneratedModule'
 import type { Map } from 'immutable'
