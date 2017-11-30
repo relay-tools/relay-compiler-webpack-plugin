@@ -6,6 +6,10 @@ var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
 
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
 var _getSchema = require('./getSchema');
 
 var _getSchema2 = _interopRequireDefault(_getSchema);
@@ -85,43 +89,61 @@ class RelayCompilerWebpackPlugin {
     this.writerConfigs.default.getWriter = (0, _getWriter2.default)(options.src);
   }
 
-  apply(compiler) {
+  compile(issuer, request) {
     var _this = this;
 
-    compiler.plugin('before-compile', (() => {
-      var _ref = _asyncToGenerator(function* (compilationParams, callback) {
-        const errors = [];
-        try {
-          const reporter = {
-            reportError: function reportError(area, error) {
-              return errors.push(error);
-            }
-          };
+    return _asyncToGenerator(function* () {
+      const errors = [];
+      try {
+        const reporter = {
+          reportError: function reportError(area, error) {
+            return errors.push(error);
+          }
+        };
 
-          const runner = new _relayCompiler.Runner({
-            parserConfigs: _this.parserConfigs,
-            writerConfigs: _this.writerConfigs,
-            reporter: reporter,
-            onlyValidate: false,
-            skipPersist: true
+        const runner = new _relayCompiler.Runner({
+          parserConfigs: _this.parserConfigs,
+          writerConfigs: _this.writerConfigs,
+          reporter: reporter,
+          onlyValidate: false,
+          skipPersist: true
+        });
+
+        yield runner.compile('default');
+      } catch (error) {
+        errors.push(error);
+      }
+
+      if (errors.length) {
+        throw errors[0];
+      }
+    })();
+  }
+
+  cachedCompiler() {
+    let result;
+    return (issuer, request) => {
+      if (!result) result = this.compile(issuer, request);
+      return result;
+    };
+  }
+
+  apply(compiler) {
+    compiler.plugin('compilation', (compilation, params) => {
+      const compile = this.cachedCompiler();
+      params.normalModuleFactory.plugin('before-resolve', (result, callback) => {
+        if (result && result.request.match(/__generated__/)) {
+          const request = _path2.default.resolve(_path2.default.dirname(result.contextInfo.issuer), result.request);
+          compile(result.contextInfo.issuer, request).then(() => {
+            callback(null, result);
+          }).catch(error => {
+            callback(error);
           });
-
-          yield runner.compileAll();
-        } catch (error) {
-          errors.push(error);
-        }
-
-        if (errors.length) {
-          callback(errors[0]);
         } else {
-          callback();
+          callback(null, result);
         }
       });
-
-      return function (_x, _x2) {
-        return _ref.apply(this, arguments);
-      };
-    })());
+    });
   }
 }
 

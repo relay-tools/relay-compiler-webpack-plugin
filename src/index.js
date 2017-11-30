@@ -2,6 +2,7 @@
 
 import { Runner, FileIRParser, ConsoleReporter } from 'relay-compiler'
 import fs from 'fs'
+import path from 'path'
 
 import getSchema from './getSchema'
 import getFileFilter from './getFileFilter'
@@ -81,32 +82,54 @@ class RelayCompilerWebpackPlugin {
     this.writerConfigs.default.getWriter = getWriter(options.src)
   }
 
+  async compile (issuer: string, request: string) {
+    const errors = []
+    try {
+      const reporter = {
+        reportError: (area, error) => errors.push(error)
+      }
+
+      const runner = new Runner({
+        parserConfigs: this.parserConfigs,
+        writerConfigs: this.writerConfigs,
+        reporter: reporter,
+        onlyValidate: false,
+        skipPersist: true,
+      })
+
+      await runner.compile('default')
+    } catch (error) {
+      errors.push(error)
+    }
+
+    if (errors.length) {
+      throw errors[0]
+    }
+  }
+
+  cachedCompiler() {
+    let result
+    return (issuer: string, request: string) => {
+      if (!result) result = this.compile(issuer, request)
+      return result
+    }
+  }
+
   apply (compiler: Compiler) {
-    compiler.plugin('before-compile', async (compilationParams, callback) => {
-      const errors = []
-      try {
-        const reporter = {
-          reportError: (area, error) => errors.push(error)
+    compiler.plugin('compilation', (compilation, params) => {
+      const compile = this.cachedCompiler()
+      params.normalModuleFactory.plugin('before-resolve', (result, callback) => {
+        if (result && result.request.match(/__generated__/)) {
+          const request = path.resolve(path.dirname(result.contextInfo.issuer), result.request)
+          compile(result.contextInfo.issuer, request).then(() => {
+            callback(null, result)
+          }).catch(error => {
+            callback(error)
+          })
+        } else {
+          callback(null, result)
         }
-
-        const runner = new Runner({
-          parserConfigs: this.parserConfigs,
-          writerConfigs: this.writerConfigs,
-          reporter: reporter,
-          onlyValidate: false,
-          skipPersist: true,
-        })
-
-        await runner.compileAll()
-      } catch (error) {
-        errors.push(error)
-      }
-
-      if (errors.length) {
-        callback(errors[0])
-      } else {
-        callback()
-      }
+      });
     })
   }
 }
