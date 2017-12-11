@@ -9,12 +9,12 @@ import getFileFilter from './getFileFilter'
 import getWriter from './getWriter'
 import getFilepathsFromGlob from './getFilepathsFromGlob'
 
+import type { GraphQLSchema } from 'graphql';
 import type { Compiler } from 'webpack'
 
 class RelayCompilerWebpackPlugin {
   parserConfigs = {
     default: {
-      schema: '',
       baseDir: '',
       getFileFilter,
       getParser: FileIRParser.getParser,
@@ -33,7 +33,7 @@ class RelayCompilerWebpackPlugin {
   }
 
   constructor (options: {
-    schema: string,
+    schema: string | GraphQLSchema,
     src: string,
     extensions: Array<string>,
     include: Array<String>,
@@ -44,10 +44,10 @@ class RelayCompilerWebpackPlugin {
     }
 
     if (!options.schema) {
-      throw new Error('You must provide a Relay Schema path.')
+      throw new Error('You must provide a Relay Schema.')
     }
 
-    if (!fs.existsSync(options.schema)) {
+    if (typeof options.schema === 'string' && !fs.existsSync(options.schema)) {
       throw new Error('Could not find the Schema. Have you provided a fully resolved path?')
     }
 
@@ -75,8 +75,9 @@ class RelayCompilerWebpackPlugin {
     }
 
     this.parserConfigs.default.baseDir = options.src
-    this.parserConfigs.default.schema = options.schema
-    this.parserConfigs.default.getSchema = () => getSchema(options.schema)
+    this.parserConfigs.default.getSchema = typeof options.schema === 'string' ?
+      () => getSchema(options.schema) :
+      () => options.schema;
     this.parserConfigs.default.filepaths = getFilepathsFromGlob(options.src, fileOptions)
 
     this.writerConfigs.default.getWriter = getWriter(options.src)
