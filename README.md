@@ -28,7 +28,7 @@ module.exports = {
   plugins: [
     // ...
     new RelayCompilerWebpackPlugin({
-      schema: path.resolve(__dirname, './relative/path/to/schema.graphql'), // or schema.json
+      schema: path.resolve(__dirname, './relative/path/to/schema.graphql'), // or schema.json or a GraphQLSchema instance
       src: path.resolve(__dirname, './relative/path/to/source/files'),
     })
   ]
