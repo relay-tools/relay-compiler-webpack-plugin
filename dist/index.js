@@ -35,7 +35,6 @@ class RelayCompilerWebpackPlugin {
   constructor(options) {
     this.parserConfigs = {
       default: {
-        schema: '',
         baseDir: '',
         getFileFilter: _getFileFilter2.default,
         getParser: _relayCompiler.FileIRParser.getParser,
@@ -56,10 +55,10 @@ class RelayCompilerWebpackPlugin {
     }
 
     if (!options.schema) {
-      throw new Error('You must provide a Relay Schema path.');
+      throw new Error('You must provide a Relay Schema.');
     }
 
-    if (!_fs2.default.existsSync(options.schema)) {
+    if (typeof options.schema === 'string' && !_fs2.default.existsSync(options.schema)) {
       throw new Error('Could not find the Schema. Have you provided a fully resolved path?');
     }
 
@@ -82,8 +81,7 @@ class RelayCompilerWebpackPlugin {
     };
 
     this.parserConfigs.default.baseDir = options.src;
-    this.parserConfigs.default.schema = options.schema;
-    this.parserConfigs.default.getSchema = () => (0, _getSchema2.default)(options.schema);
+    this.parserConfigs.default.getSchema = typeof options.schema === 'string' ? () => (0, _getSchema2.default)(options.schema) : () => options.schema;
     this.parserConfigs.default.filepaths = (0, _getFilepathsFromGlob2.default)(options.src, fileOptions);
 
     this.writerConfigs.default.getWriter = (0, _getWriter2.default)(options.src);
