@@ -120,7 +120,7 @@ class RelayCompilerWebpackPlugin {
     compiler.plugin('compilation', (compilation, params) => {
       const compile = this.cachedCompiler()
       params.normalModuleFactory.plugin('before-resolve', (result, callback) => {
-        if (result && result.request.match(/__generated__/)) {
+        if (result && result.contextInfo.issuer && result.request.match(/__generated__/)) {
           const request = path.resolve(path.dirname(result.contextInfo.issuer), result.request)
           compile(result.contextInfo.issuer, request).then(() => {
             callback(null, result)
