@@ -1,6 +1,6 @@
 {
   "name": "relay-compiler-webpack-plugin",
-  "version": "0.5.10",
+  "version": "0.5.11",
   "description": "Automatically run the Relay Compiler from Webpack",
   "repository": {
     "type": "git",
