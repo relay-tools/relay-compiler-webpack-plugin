@@ -11,6 +11,7 @@ import getFilepathsFromGlob from './getFilepathsFromGlob'
 
 import type { GraphQLSchema } from 'graphql';
 import type { Compiler } from 'webpack'
+import type { GraphQLReporter } from 'relay-compiler/lib/GraphQLReporter';
 
 class RelayCompilerWebpackPlugin {
   parserConfigs = {
@@ -86,8 +87,9 @@ class RelayCompilerWebpackPlugin {
   async compile (issuer: string, request: string) {
     const errors = []
     try {
-      const reporter = {
-        reportError: (area, error) => errors.push(error)
+      const reporter: GraphQLReporter = {
+        reportError: (area, error) => errors.push(error),
+        reportTime: () => {},
       }
 
       const runner = new Runner({
