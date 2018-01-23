@@ -17,7 +17,6 @@
     "prepublish": "yarn run flow && yarn run clean && yarn run build"
   },
   "peerDependencies": {
-    "graphql": ">=0.10.5",
     "relay-compiler": ">=1.2.0",
     "webpack": ">=2.3.0"
   },
@@ -28,7 +27,6 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-stage-1": "^6.24.1",
     "flow-bin": "^0.61.0",
-    "graphql": "^0.11.7",
     "relay-compiler": "^1.2.0",
     "rimraf": "^2.6.2",
     "webpack": "^3.8.1"
