@@ -1,6 +1,6 @@
 // @flow
 
-import { Runner, FileIRParser, ConsoleReporter } from 'relay-compiler'
+import { Runner, FileIRParser } from 'relay-compiler'
 import fs from 'fs'
 import path from 'path'
 
