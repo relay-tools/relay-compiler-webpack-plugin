@@ -96,7 +96,8 @@ class RelayCompilerWebpackPlugin {
         const reporter = {
           reportError: function reportError(area, error) {
             return errors.push(error);
-          }
+          },
+          reportTime: function reportTime() {}
         };
 
         const runner = new _relayCompiler.Runner({
