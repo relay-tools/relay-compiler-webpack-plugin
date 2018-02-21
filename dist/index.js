@@ -97,7 +97,8 @@ class RelayCompilerWebpackPlugin {
           reportError: function reportError(area, error) {
             return errors.push(error);
           },
-          reportTime: function reportTime() {}
+          reportTime: function reportTime() {},
+          reportMessage: function reportMessage() {}
         };
 
         const runner = new _relayCompiler.Runner({
