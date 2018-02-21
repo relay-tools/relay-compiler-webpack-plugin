@@ -14,6 +14,7 @@
     "clean": "rimraf dist",
     "build": "babel src --out-dir dist",
     "flow": "flow",
+    "test": "yarn run prepublish",
     "prepublish": "yarn run flow && yarn run clean && yarn run build"
   },
   "peerDependencies": {
@@ -26,8 +27,8 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-stage-1": "^6.24.1",
-    "flow-bin": "^0.63.1",
-    "relay-compiler": "^1.5.0-rc.1",
+    "flow-bin": "^0.66.0",
+    "relay-compiler": "^1.5.0",
     "rimraf": "^2.6.2",
     "webpack": "^3.8.1"
   },

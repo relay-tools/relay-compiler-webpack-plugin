@@ -90,6 +90,7 @@ class RelayCompilerWebpackPlugin {
       const reporter: GraphQLReporter = {
         reportError: (area, error) => errors.push(error),
         reportTime: () => {},
+        reportMessage: () => {},
       }
 
       const runner = new Runner({
