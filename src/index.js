@@ -9,9 +9,9 @@ import getFileFilter from './getFileFilter'
 import getWriter from './getWriter'
 import getFilepathsFromGlob from './getFilepathsFromGlob'
 
-import type { GraphQLSchema } from 'graphql';
+import type { GraphQLSchema } from 'graphql'
 import type { Compiler } from 'webpack'
-import type { GraphQLReporter } from 'relay-compiler/lib/GraphQLReporter';
+import type { GraphQLReporter } from 'relay-compiler/lib/GraphQLReporter'
 
 class RelayCompilerWebpackPlugin {
   parserConfigs = {
@@ -20,8 +20,8 @@ class RelayCompilerWebpackPlugin {
       getFileFilter,
       getParser: JSModuleParser.getParser,
       getSchema: () => {},
-      filepaths: null,
-    },
+      filepaths: null
+    }
   }
 
   writerConfigs = {
@@ -29,8 +29,8 @@ class RelayCompilerWebpackPlugin {
       getWriter: (...any: any) => {},
       isGeneratedFile: (filePath: string) =>
         filePath.endsWith('.js') && filePath.includes('__generated__'),
-      parser: 'default',
-    },
+      parser: 'default'
+    }
   }
 
   constructor (options: {
@@ -38,7 +38,7 @@ class RelayCompilerWebpackPlugin {
     src: string,
     extensions: Array<string>,
     include: Array<String>,
-    exclude: Array<String>,
+    exclude: Array<String>
   }) {
     if (!options) {
       throw new Error('You must provide options to RelayCompilerWebpackPlugin.')
@@ -49,7 +49,9 @@ class RelayCompilerWebpackPlugin {
     }
 
     if (typeof options.schema === 'string' && !fs.existsSync(options.schema)) {
-      throw new Error('Could not find the Schema. Have you provided a fully resolved path?')
+      throw new Error(
+        'Could not find the Schema. Have you provided a fully resolved path?'
+      )
     }
 
     if (!options.src) {
@@ -57,29 +59,39 @@ class RelayCompilerWebpackPlugin {
     }
 
     if (!fs.existsSync(options.src)) {
-      throw new Error('Could not find your `src` path. Have you provided a fully resolved path?')
+      throw new Error(
+        'Could not find your `src` path. Have you provided a fully resolved path?'
+      )
     }
 
-    const extensions = options.extensions !== undefined ? options.extensions : [ 'js' ]
-    const include = options.include !== undefined ? options.include : [ '**' ]
-    const exclude = options.exclude !== undefined ? options.exclude : [
-      '**/node_modules/**',
-      '**/__mocks__/**',
-      '**/__tests__/**',
-      '**/__generated__/**',
-    ]
+    const extensions =
+      options.extensions !== undefined ? options.extensions : ['js']
+    const include = options.include !== undefined ? options.include : ['**']
+    const exclude =
+      options.exclude !== undefined
+        ? options.exclude
+        : [
+          '**/node_modules/**',
+          '**/__mocks__/**',
+          '**/__tests__/**',
+          '**/__generated__/**'
+        ]
 
     const fileOptions = {
       extensions,
       include,
-      exclude,
+      exclude
     }
 
     this.parserConfigs.default.baseDir = options.src
-    this.parserConfigs.default.getSchema = typeof options.schema === 'string' ?
-      () => getSchema(options.schema) :
-      () => options.schema;
-    this.parserConfigs.default.filepaths = getFilepathsFromGlob(options.src, fileOptions)
+    this.parserConfigs.default.getSchema =
+      typeof options.schema === 'string'
+        ? () => getSchema(options.schema)
+        : () => options.schema
+    this.parserConfigs.default.filepaths = getFilepathsFromGlob(
+      options.src,
+      fileOptions
+    )
 
     this.writerConfigs.default.getWriter = getWriter(options.src)
   }
@@ -90,7 +102,7 @@ class RelayCompilerWebpackPlugin {
       const reporter: GraphQLReporter = {
         reportError: (area, error) => errors.push(error),
         reportTime: () => {},
-        reportMessage: () => {},
+        reportMessage: () => {}
       }
 
       const runner = new Runner({
@@ -98,7 +110,7 @@ class RelayCompilerWebpackPlugin {
         writerConfigs: this.writerConfigs,
         reporter: reporter,
         onlyValidate: false,
-        skipPersist: true,
+        skipPersist: true
       })
 
       await runner.compile('default')
@@ -111,7 +123,7 @@ class RelayCompilerWebpackPlugin {
     }
   }
 
-  cachedCompiler() {
+  cachedCompiler () {
     let result
     return (issuer: string, request: string) => {
       if (!result) result = this.compile(issuer, request)
@@ -122,18 +134,30 @@ class RelayCompilerWebpackPlugin {
   apply (compiler: Compiler) {
     compiler.plugin('compilation', (compilation, params) => {
       const compile = this.cachedCompiler()
-      params.normalModuleFactory.plugin('before-resolve', (result, callback) => {
-        if (result && result.contextInfo.issuer && result.request.match(/__generated__/)) {
-          const request = path.resolve(path.dirname(result.contextInfo.issuer), result.request)
-          compile(result.contextInfo.issuer, request).then(() => {
+      params.normalModuleFactory.plugin(
+        'before-resolve',
+        (result, callback) => {
+          if (
+            result &&
+            result.contextInfo.issuer &&
+            result.request.match(/__generated__/)
+          ) {
+            const request = path.resolve(
+              path.dirname(result.contextInfo.issuer),
+              result.request
+            )
+            compile(result.contextInfo.issuer, request)
+              .then(() => {
+                callback(null, result)
+              })
+              .catch(error => {
+                callback(error)
+              })
+          } else {
             callback(null, result)
-          }).catch(error => {
-            callback(error)
-          })
-        } else {
-          callback(null, result)
+          }
         }
-      });
+      )
     })
   }
 }

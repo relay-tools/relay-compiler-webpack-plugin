@@ -9,28 +9,31 @@ const {
   fragmentTransforms,
   printTransforms,
   queryTransforms,
-  schemaExtensions,
+  schemaExtensions
 } = IRTransforms
 
 interface WriterConfig {
-  onlyValidate: boolean,
-  schema: GraphQLSchema,
-  documents: Map<string, Object>,
-  baseDocuments: Map<string, Object>,
-  sourceControl: any,
-  reporter: any,
+  onlyValidate: boolean;
+  schema: GraphQLSchema;
+  documents: Map<string, Object>;
+  baseDocuments: Map<string, Object>;
+  sourceControl: any;
+  reporter: any;
 }
 
 export default function getWriter (baseDir: string) {
   return (config: WriterConfig | boolean, ...args) => {
-    const cfg = typeof config === 'object' ? config : {
-      onlyValidate: config,
-      schema: args[0],
-      documents: args[1],
-      baseDocuments: args[2],
-      sourceControl: args[3],
-      reporter: args[4],
-    }
+    const cfg =
+      typeof config === 'object'
+        ? config
+        : {
+          onlyValidate: config,
+          schema: args[0],
+          documents: args[1],
+          baseDocuments: args[2],
+          sourceControl: args[3],
+          reporter: args[4]
+        }
     return new FileWriter({
       ...cfg,
       config: {
@@ -40,14 +43,14 @@ export default function getWriter (baseDir: string) {
           codegenTransforms,
           fragmentTransforms,
           printTransforms,
-          queryTransforms,
+          queryTransforms
         },
         customScalars: {},
         formatModule: formatGeneratedModule,
         inputFieldWhiteListForFlow: [],
         schemaExtensions,
-        useHaste: false,
-      },
+        useHaste: false
+      }
     })
   }
 }

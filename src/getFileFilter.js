@@ -5,8 +5,8 @@ import path from 'path'
 
 type File = {
   relPath: string,
-  hash: string,
-};
+  hash: string
+}
 
 export default function getFileFilter (baseDir: string) {
   return (file: File) => {
