@@ -1,6 +1,6 @@
 // @flow
 
-import { Runner, FileIRParser } from 'relay-compiler'
+import { Runner, JSModuleParser } from 'relay-compiler'
 import fs from 'fs'
 import path from 'path'
 
@@ -18,7 +18,7 @@ class RelayCompilerWebpackPlugin {
     default: {
       baseDir: '',
       getFileFilter,
-      getParser: FileIRParser.getParser,
+      getParser: JSModuleParser.getParser,
       getSchema: () => {},
       filepaths: null,
     },

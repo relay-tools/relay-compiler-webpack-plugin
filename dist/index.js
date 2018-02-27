@@ -37,7 +37,7 @@ class RelayCompilerWebpackPlugin {
       default: {
         baseDir: '',
         getFileFilter: _getFileFilter2.default,
-        getParser: _relayCompiler.FileIRParser.getParser,
+        getParser: _relayCompiler.JSModuleParser.getParser,
         getSchema: () => {},
         filepaths: null
       }
