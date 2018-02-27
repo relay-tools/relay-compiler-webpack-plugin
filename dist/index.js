@@ -93,18 +93,10 @@ class RelayCompilerWebpackPlugin {
     return _asyncToGenerator(function* () {
       const errors = [];
       try {
-        const reporter = {
-          reportError: function reportError(area, error) {
-            return errors.push(error);
-          },
-          reportTime: function reportTime() {},
-          reportMessage: function reportMessage() {}
-        };
-
         const runner = new _relayCompiler.Runner({
           parserConfigs: _this.parserConfigs,
           writerConfigs: _this.writerConfigs,
-          reporter: reporter,
+          reporter: new _relayCompiler.GraphQLConsoleReporter({ quiet: true }),
           onlyValidate: false,
           skipPersist: true
         });
