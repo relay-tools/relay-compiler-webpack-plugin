@@ -24,8 +24,8 @@ function getSchema(schemaPath) {
       source = (0, _graphql.printSchema)((0, _graphql.buildClientSchema)(JSON.parse(source).data));
     }
     source = `
-  directive @include(if: Boolean) on FRAGMENT | FIELD
-  directive @skip(if: Boolean) on FRAGMENT | FIELD
+  directive @include(if: Boolean) on FRAGMENT_SPREAD | FIELD
+  directive @skip(if: Boolean) on FRAGMENT_SPREAD | FIELD
 
   ${source}
   `;
