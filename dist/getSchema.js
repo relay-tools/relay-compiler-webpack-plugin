@@ -22,13 +22,13 @@ function getSchema(schemaPath) {
     let source = _fs2.default.readFileSync(schemaPath, 'utf8');
     if (_path2.default.extname(schemaPath) === '.json') {
       source = (0, _graphql.printSchema)((0, _graphql.buildClientSchema)(JSON.parse(source).data));
-    }
-    source = `
-  directive @include(if: Boolean) on FRAGMENT | FIELD
-  directive @skip(if: Boolean) on FRAGMENT | FIELD
+      source = `
+directive @include(if: Boolean) on fragment | FIELD
+directive @skip(if: Boolean) on fragment | FIELD
 
-  ${source}
-  `;
+${source}
+`;
+    }
 
     return (0, _graphql.buildASTSchema)((0, _graphql.parse)(source));
   } catch (error) {
