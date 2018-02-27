@@ -1,6 +1,6 @@
 // @flow
 
-import { Runner, JSModuleParser, GraphQLConsoleReporter } from 'relay-compiler'
+import { Runner, JSModuleParser, ConsoleReporter } from 'relay-compiler'
 import fs from 'fs'
 import path from 'path'
 
@@ -102,7 +102,7 @@ class RelayCompilerWebpackPlugin {
       const runner = new Runner({
         parserConfigs: this.parserConfigs,
         writerConfigs: this.writerConfigs,
-        reporter: new GraphQLConsoleReporter({quiet: true}),
+        reporter: new ConsoleReporter({quiet: true}),
         onlyValidate: false,
         skipPersist: true
       })

@@ -96,7 +96,7 @@ class RelayCompilerWebpackPlugin {
         const runner = new _relayCompiler.Runner({
           parserConfigs: _this.parserConfigs,
           writerConfigs: _this.writerConfigs,
-          reporter: new _relayCompiler.GraphQLConsoleReporter({ quiet: true }),
+          reporter: new _relayCompiler.ConsoleReporter({ quiet: true }),
           onlyValidate: false,
           skipPersist: true
         });
