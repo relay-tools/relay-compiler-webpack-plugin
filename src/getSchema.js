@@ -14,13 +14,13 @@ export default function getSchema(schemaPath: string): GraphQLSchema {
     let source = fs.readFileSync(schemaPath, 'utf8')
     if (path.extname(schemaPath) === '.json') {
       source = printSchema(buildClientSchema(JSON.parse(source).data))
-    }
-    source = `
-  directive @include(if: Boolean) on FRAGMENT | FIELD
-  directive @skip(if: Boolean) on FRAGMENT | FIELD
+      source = `
+directive @include(if: Boolean) on fragment | FIELD
+directive @skip(if: Boolean) on fragment | FIELD
 
-  ${source}
-  `
+${source}
+`
+    }
 
     return buildASTSchema(parse(source))
   } catch (error) {
