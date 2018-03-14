@@ -1,3 +1,5 @@
+import glob from 'fast-glob'
+
 export default function getFilepathsFromGlob (
   baseDir,
   options: {
@@ -9,8 +11,6 @@ export default function getFilepathsFromGlob (
   const { extensions, include, exclude } = options
   const patterns = include.map(inc => `${inc}/*.+(${extensions.join('|')})`)
 
-  // $FlowFixMe(site=react_native_fb,www)
-  const glob = require('fast-glob')
   return glob.sync(patterns, {
     cwd: baseDir,
     bashNative: [],
