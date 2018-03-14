@@ -47,5 +47,8 @@
       "stage-1",
       "flow"
     ]
+  },
+  "dependencies": {
+    "fast-glob": "2.2.0"
   }
 }
