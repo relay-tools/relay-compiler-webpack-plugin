@@ -126,6 +126,13 @@ class RelayCompilerWebpackPlugin {
   }
 
   apply (compiler: Compiler) {
+
+    if (compiler.hooks) {
+      compiler.hooks.compilation.tap('RelayCompilerWebpackPluginHooks', (compilation, params) => {
+        console.log('RelayCompilerWebpackPluginHooks params', compilation, params)
+      })
+    }
+
     compiler.plugin('compilation', (compilation, params) => {
       const compile = this.cachedCompiler()
       params.normalModuleFactory.plugin(
