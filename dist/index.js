@@ -120,29 +120,30 @@ class RelayCompilerWebpackPlugin {
     };
   }
 
-  apply(compiler) {
+  runCompile(compile, result, callback) {
+    if (result && result.contextInfo.issuer && result.request.match(/__generated__/)) {
+      const request = _path2.default.resolve(_path2.default.dirname(result.contextInfo.issuer), result.request);
+      compile(result.contextInfo.issuer, request).then(() => callback(null, result)).catch(error => callback(error));
+    } else {
+      callback(null, result);
+    }
+  }
 
+  apply(compiler) {
     if (compiler.hooks) {
-      compiler.hooks.compilation.tap('RelayCompilerWebpackPluginHooks', (compilation, params) => {
-        console.log('RelayCompilerWebpackPluginHooks params', compilation, params);
+      compiler.hooks.compilation.tap('RelayCompilerWebpackPlugin', (compilation, params) => {
+        params.normalModuleFactory.hooks.beforeResolve.tap('RelayCompilerWebpackPlugin', (result, callback) => {
+          this.runCompile(compile, result, callback);
+        });
+      });
+    } else {
+      compiler.plugin('compilation', (compilation, params) => {
+        const compile = this.cachedCompiler();
+        params.normalModuleFactory.plugin('before-resolve', (result, callback) => {
+          this.runCompile(compile, result, callback);
+        });
       });
     }
-
-    compiler.plugin('compilation', (compilation, params) => {
-      const compile = this.cachedCompiler();
-      params.normalModuleFactory.plugin('before-resolve', (result, callback) => {
-        if (result && result.contextInfo.issuer && result.request.match(/__generated__/)) {
-          const request = _path2.default.resolve(_path2.default.dirname(result.contextInfo.issuer), result.request);
-          compile(result.contextInfo.issuer, request).then(() => {
-            callback(null, result);
-          }).catch(error => {
-            callback(error);
-          });
-        } else {
-          callback(null, result);
-        }
-      });
-    });
   }
 }
 
