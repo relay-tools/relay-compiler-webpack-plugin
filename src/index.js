@@ -142,16 +142,15 @@ class RelayCompilerWebpackPlugin {
   }
 
   apply (compiler: Compiler) {
+    const compile = this.cachedCompiler()
     if (compiler.hooks) {
       compiler.hooks.compilation.tap('RelayCompilerWebpackPlugin', (compilation, params) => {
-        params.normalModuleFactory.hooks.beforeResolve
-          .tap('RelayCompilerWebpackPlugin', (result, callback) => {
-            this.runCompile(compile, result, callback)
-          })
+        params.normalModuleFactory.hooks.beforeResolve.tapAsync('RelayCompilerWebpackPlugin', (result, callback) => {
+          this.runCompile(compile, result, callback)
+        })
       })
     } else {
       compiler.plugin('compilation', (compilation, params) => {
-        const compile = this.cachedCompiler()
         params.normalModuleFactory.plugin('before-resolve', (result, callback) => {
           this.runCompile(compile, result, callback)
         })
