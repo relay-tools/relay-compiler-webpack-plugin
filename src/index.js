@@ -127,7 +127,11 @@ class RelayCompilerWebpackPlugin {
     }
   }
 
-  runCompile (compile, result, callback) {
+  runCompile (
+    compile: (issuer: string, request: string) => any,
+    result: any,
+    callback: (error: Error | null, value: string | typeof undefined) => void
+  ) {
     if (result && result.contextInfo.issuer && result.request.match(/__generated__/)) {
       const request = path.resolve(
         path.dirname(result.contextInfo.issuer),
