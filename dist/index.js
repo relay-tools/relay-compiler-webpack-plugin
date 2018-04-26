@@ -1,6 +1,10 @@
 'use strict';
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _relayCompiler = require('relay-compiler');
+
+var _GraphQLCompilerPublic = require('relay-compiler/lib/GraphQLCompilerPublic');
 
 var _fs = require('fs');
 
@@ -34,19 +38,27 @@ class RelayCompilerWebpackPlugin {
 
   constructor(options) {
     this.parserConfigs = {
-      default: {
+      js: {
         baseDir: '',
         getFileFilter: _getFileFilter2.default,
         getParser: _relayCompiler.JSModuleParser.getParser,
         getSchema: () => {},
         filepaths: null
+      },
+      graphql: {
+        baseDir: '',
+        getParser: _GraphQLCompilerPublic.DotGraphQLParser.getParser,
+        getSchema: () => {},
+        filepaths: null
       }
     };
     this.writerConfigs = {
-      default: {
+      js: {
         getWriter: (...any) => {},
         isGeneratedFile: filePath => filePath.endsWith('.js') && filePath.includes('__generated__'),
-        parser: 'default'
+        parser: 'js',
+        baseParsers: ['graphql']
+
       }
     };
 
@@ -79,12 +91,24 @@ class RelayCompilerWebpackPlugin {
       include,
       exclude
     };
+    const schemaFn = typeof options.schema === 'string' ? () => (0, _getSchema2.default)(options.schema) : () => options.schema;
 
-    this.parserConfigs.default.baseDir = options.src;
-    this.parserConfigs.default.getSchema = typeof options.schema === 'string' ? () => (0, _getSchema2.default)(options.schema) : () => options.schema;
-    this.parserConfigs.default.filepaths = (0, _getFilepathsFromGlob2.default)(options.src, fileOptions);
+    if (options.getParser !== undefined) this.parserConfigs.js.getParser = options.getParser;
+    this.parserConfigs.js.baseDir = options.src;
+    this.parserConfigs.js.getSchema = schemaFn;
+    this.parserConfigs.js.filepaths = (0, _getFilepathsFromGlob2.default)(options.src, fileOptions);
+    this.writerConfigs.js.getWriter = (0, _getWriter2.default)(options.src);
 
-    this.writerConfigs.default.getWriter = (0, _getWriter2.default)(options.src);
+    this.parserConfigs.graphql.baseDir = options.src;
+    this.parserConfigs.graphql.getSchema = schemaFn;
+    this.parserConfigs.graphql.filepaths = (0, _getFilepathsFromGlob2.default)(options.src, _extends({}, fileOptions, { extensions: ['graphql'] }));
+    this.runner = new _relayCompiler.Runner({
+      parserConfigs: this.parserConfigs,
+      writerConfigs: this.writerConfigs,
+      reporter: new _relayCompiler.ConsoleReporter({ quiet: true }),
+      onlyValidate: false,
+      skipPersist: true
+    });
   }
 
   compile(issuer, request) {
@@ -93,15 +117,7 @@ class RelayCompilerWebpackPlugin {
     return _asyncToGenerator(function* () {
       const errors = [];
       try {
-        const runner = new _relayCompiler.Runner({
-          parserConfigs: _this.parserConfigs,
-          writerConfigs: _this.writerConfigs,
-          reporter: new _relayCompiler.ConsoleReporter({ quiet: true }),
-          onlyValidate: false,
-          skipPersist: true
-        });
-
-        yield runner.compile('default');
+        yield _this.runner.compile('js');
       } catch (error) {
         errors.push(error);
       }
@@ -130,15 +146,16 @@ class RelayCompilerWebpackPlugin {
   }
 
   apply(compiler) {
-    const compile = this.cachedCompiler();
     if (compiler.hooks) {
       compiler.hooks.compilation.tap('RelayCompilerWebpackPlugin', (compilation, params) => {
+        const compile = this.cachedCompiler();
         params.normalModuleFactory.hooks.beforeResolve.tapAsync('RelayCompilerWebpackPlugin', (result, callback) => {
           this.runCompile(compile, result, callback);
         });
       });
     } else {
       compiler.plugin('compilation', (compilation, params) => {
+        const compile = this.cachedCompiler();
         params.normalModuleFactory.plugin('before-resolve', (result, callback) => {
           this.runCompile(compile, result, callback);
         });

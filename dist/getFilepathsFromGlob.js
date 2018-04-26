@@ -22,6 +22,7 @@ function getFilepathsFromGlob(baseDir, options) {
     cwd: baseDir,
     bashNative: [],
     onlyFiles: true,
+    dot: true, // match behavior of watchman from relay-compiler
     ignore: exclude
   });
 }
