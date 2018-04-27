@@ -109,13 +109,6 @@ class RelayCompilerWebpackPlugin {
     this.parserConfigs.graphql.baseDir = options.src;
     this.parserConfigs.graphql.getSchema = schemaFn;
     this.parserConfigs.graphql.filepaths = (0, _getFilepathsFromGlob2.default)(options.src, _extends({}, fileOptions, { extensions: ['graphql'] }));
-    this.runner = new _relayCompiler.Runner({
-      parserConfigs: this.parserConfigs,
-      writerConfigs: this.writerConfigs,
-      reporter: new _relayCompiler.ConsoleReporter({ quiet: true }),
-      onlyValidate: false,
-      skipPersist: true
-    });
   }
 
   compile(issuer, request) {
@@ -124,7 +117,14 @@ class RelayCompilerWebpackPlugin {
     return _asyncToGenerator(function* () {
       const errors = [];
       try {
-        yield _this.runner.compile('js');
+        const runner = new _relayCompiler.Runner({
+          parserConfigs: _this.parserConfigs,
+          writerConfigs: _this.writerConfigs,
+          reporter: new _relayCompiler.ConsoleReporter({ quiet: true }),
+          onlyValidate: false,
+          skipPersist: true
+        });
+        return runner.compile('js');
       } catch (error) {
         errors.push(error);
       }

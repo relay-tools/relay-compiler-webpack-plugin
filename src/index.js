@@ -125,19 +125,19 @@ class RelayCompilerWebpackPlugin {
       options.src,
       {...fileOptions, extensions:['graphql']}
     )
-    this.runner = new Runner({
-      parserConfigs: this.parserConfigs,
-      writerConfigs: this.writerConfigs,
-      reporter: new ConsoleReporter({quiet: true}),
-      onlyValidate: false,
-      skipPersist: true
-    })
   }
 
   async compile(issuer: string, request: string) {
     const errors = []
     try {
-      await this.runner.compile('js')
+      const runner = new Runner({
+        parserConfigs: this.parserConfigs,
+        writerConfigs: this.writerConfigs,
+        reporter: new ConsoleReporter({quiet: true}),
+        onlyValidate: false,
+        skipPersist: true
+      })
+      return runner.compile('js')
     } catch (error) {
       errors.push(error)
     }
