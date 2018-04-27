@@ -1,7 +1,16 @@
 // @flow
 
 import {Runner, JSModuleParser, ConsoleReporter} from 'relay-compiler'
-import {DotGraphQLParser} from 'relay-compiler/lib/GraphQLCompilerPublic'
+
+let GraphQLLib // Support pre 1.6 relay
+try {
+  GraphQLLib = require('graphql-compiler')
+} catch (e) {
+  // $FlowFixMe
+  GraphQLLib = require('relay-compiler/lib/GraphQLCompilerPublic')
+}
+const DotGraphQLParser = GraphQLLib.DotGraphQLParser
+
 import fs from 'fs'
 import path from 'path'
 
@@ -12,7 +21,6 @@ import getFilepathsFromGlob from './getFilepathsFromGlob'
 
 import type {GraphQLSchema} from 'graphql'
 import type {Compiler} from 'webpack'
-import type {GraphQLReporter} from 'relay-compiler/lib/GraphQLReporter'
 
 class RelayCompilerWebpackPlugin {
   runner: Runner

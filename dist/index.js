@@ -4,8 +4,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _relayCompiler = require('relay-compiler');
 
-var _GraphQLCompilerPublic = require('relay-compiler/lib/GraphQLCompilerPublic');
-
 var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
@@ -34,6 +32,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
+let GraphQLLib; // Support pre 1.6 relay
+try {
+  GraphQLLib = require('graphql-compiler');
+} catch (e) {
+  // $FlowFixMe
+  GraphQLLib = require('relay-compiler/lib/GraphQLCompilerPublic');
+}
+const DotGraphQLParser = GraphQLLib.DotGraphQLParser;
+
 class RelayCompilerWebpackPlugin {
 
   constructor(options) {
@@ -47,7 +54,7 @@ class RelayCompilerWebpackPlugin {
       },
       graphql: {
         baseDir: '',
-        getParser: _GraphQLCompilerPublic.DotGraphQLParser.getParser,
+        getParser: DotGraphQLParser.getParser,
         getSchema: () => {},
         filepaths: null
       }
