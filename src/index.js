@@ -1,6 +1,16 @@
 // @flow
 
 import {Runner, JSModuleParser, ConsoleReporter} from 'relay-compiler'
+
+let GraphQLLib // Support pre 1.6 relay
+try {
+  GraphQLLib = require('graphql-compiler')
+} catch (e) {
+  // $FlowFixMe
+  GraphQLLib = require('relay-compiler/lib/GraphQLCompilerPublic')
+}
+const DotGraphQLParser = GraphQLLib.DotGraphQLParser
+
 import fs from 'fs'
 import path from 'path'
 
@@ -11,33 +21,43 @@ import getFilepathsFromGlob from './getFilepathsFromGlob'
 
 import type {GraphQLSchema} from 'graphql'
 import type {Compiler} from 'webpack'
-import type {GraphQLReporter} from 'relay-compiler/lib/GraphQLReporter'
 
 class RelayCompilerWebpackPlugin {
+  runner: Runner
+
   parserConfigs = {
-    default: {
+    js: {
       baseDir: '',
       getFileFilter,
       getParser: JSModuleParser.getParser,
       getSchema: () => {
       },
       filepaths: null
+    },
+    graphql: {
+      baseDir: '',
+      getParser: DotGraphQLParser.getParser,
+      getSchema: () => {},
+      filepaths: null
     }
   }
 
   writerConfigs = {
-    default: {
+    js: {
       getWriter: (...any: any) => {
       },
       isGeneratedFile: (filePath: string) =>
         filePath.endsWith('.js') && filePath.includes('__generated__'),
-      parser: 'default'
+      parser: 'js',
+      baseParsers: ['graphql']
+
     }
   }
 
   constructor(options: {
     schema: string | GraphQLSchema,
     src: string,
+    getParser?: Function,
     extensions: Array<string>,
     include: Array<String>,
     exclude: Array<String>
@@ -84,18 +104,27 @@ class RelayCompilerWebpackPlugin {
       include,
       exclude
     }
-
-    this.parserConfigs.default.baseDir = options.src
-    this.parserConfigs.default.getSchema =
+    const schemaFn =
       typeof options.schema === 'string'
         ? () => getSchema(options.schema)
         : () => options.schema
-    this.parserConfigs.default.filepaths = getFilepathsFromGlob(
+
+    if (options.getParser !== undefined)
+      this.parserConfigs.js.getParser = options.getParser
+    this.parserConfigs.js.baseDir = options.src
+    this.parserConfigs.js.getSchema = schemaFn
+    this.parserConfigs.js.filepaths = getFilepathsFromGlob(
       options.src,
       fileOptions
     )
+    this.writerConfigs.js.getWriter = getWriter(options.src)
 
-    this.writerConfigs.default.getWriter = getWriter(options.src)
+    this.parserConfigs.graphql.baseDir = options.src
+    this.parserConfigs.graphql.getSchema = schemaFn
+    this.parserConfigs.graphql.filepaths = getFilepathsFromGlob(
+      options.src,
+      {...fileOptions, extensions:['graphql']}
+    )
   }
 
   async compile(issuer: string, request: string) {
@@ -108,8 +137,7 @@ class RelayCompilerWebpackPlugin {
         onlyValidate: false,
         skipPersist: true
       })
-
-      await runner.compile('default')
+      return runner.compile('js')
     } catch (error) {
       errors.push(error)
     }
@@ -146,15 +174,16 @@ class RelayCompilerWebpackPlugin {
   }
 
   apply (compiler: Compiler) {
-    const compile = this.cachedCompiler()
     if (compiler.hooks) {
       compiler.hooks.compilation.tap('RelayCompilerWebpackPlugin', (compilation, params) => {
+        const compile = this.cachedCompiler()
         params.normalModuleFactory.hooks.beforeResolve.tapAsync('RelayCompilerWebpackPlugin', (result, callback) => {
           this.runCompile(compile, result, callback)
         })
       })
     } else {
       compiler.plugin('compilation', (compilation, params) => {
+        const compile = this.cachedCompiler()
         params.normalModuleFactory.plugin('before-resolve', (result, callback) => {
           this.runCompile(compile, result, callback)
         })

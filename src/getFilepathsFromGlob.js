@@ -15,6 +15,7 @@ export default function getFilepathsFromGlob (
     cwd: baseDir,
     bashNative: [],
     onlyFiles: true,
+    dot: true, // match behavior of watchman from relay-compiler
     ignore: exclude
   })
 }
