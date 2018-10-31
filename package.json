@@ -1,6 +1,6 @@
 {
   "name": "relay-compiler-webpack-plugin",
-  "version": "0.11.0",
+  "version": "1.0.0",
   "description": "Automatically run the Relay Compiler from Webpack",
   "repository": {
     "type": "git",
@@ -8,48 +8,50 @@
   },
   "main": "dist/index.js",
   "jsnext/main": "src/index.js",
-  "author": "Tasveer Singh",
+  "author": "Daniel Holmes",
   "license": "BSD-3-Clause",
   "scripts": {
     "clean": "rimraf dist",
     "build": "babel src --out-dir dist",
     "flow": "flow",
     "format": "prettier-standard 'src/**/*.js'",
-    "test": "yarn run prepublish",
-    "prepublish": "yarn run flow && yarn run clean && yarn run build"
+    "test": "yarn prepublish",
+    "prepublish": "yarn flow && yarn clean && yarn build"
   },
   "peerDependencies": {
-    "relay-compiler": ">=1.2.0",
-    "webpack": ">=2.3.0"
+    "relay-compiler": "^1.7.0",
+    "webpack": ">=3.0.0"
   },
   "dependencies": {
     "fast-glob": "~2.2.0",
     "graphql": "^0.13.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-flow": "^6.23.0",
-    "babel-preset-stage-1": "^6.24.1",
-    "flow-bin": "^0.67.1",
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-flow": "^7.0.0",
+    "flow-bin": "0.84.0",
     "prettier-standard": "^8.0.1",
-    "relay-compiler": "^1.6.0",
+    "relay-compiler": "^1.7.0",
     "rimraf": "^2.6.2",
     "webpack": "^4.5.0"
   },
   "babel": {
     "presets": [
       [
-        "env",
+        "@babel/preset-env",
         {
           "targets": {
             "node": "6.1"
           }
         }
       ],
-      "stage-1",
-      "flow"
+      "@babel/preset-flow"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-class-properties"
     ]
   }
 }

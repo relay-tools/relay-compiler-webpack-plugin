@@ -1,5 +1,6 @@
 import { FileWriter, IRTransforms } from 'relay-compiler'
 import formatGeneratedModule from 'relay-compiler/lib/formatGeneratedModule'
+import RelayFlowGenerator from 'relay-compiler/lib/RelayFlowGenerator'
 import type { Map } from 'immutable'
 import type { GraphQLSchema } from 'graphql'
 
@@ -49,6 +50,8 @@ export default function getWriter (baseDir: string) {
         formatModule: formatGeneratedModule,
         inputFieldWhiteListForFlow: [],
         schemaExtensions,
+        extension: 'js',
+        typeGenerator: RelayFlowGenerator,
         useHaste: false
       }
     })

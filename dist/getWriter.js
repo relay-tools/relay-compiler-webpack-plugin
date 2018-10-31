@@ -1,20 +1,21 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 exports.default = getWriter;
 
-var _relayCompiler = require('relay-compiler');
+var _relayCompiler = require("relay-compiler");
 
-var _formatGeneratedModule = require('relay-compiler/lib/formatGeneratedModule');
+var _formatGeneratedModule = _interopRequireDefault(require("relay-compiler/lib/formatGeneratedModule"));
 
-var _formatGeneratedModule2 = _interopRequireDefault(_formatGeneratedModule);
+var _RelayFlowGenerator = _interopRequireDefault(require("relay-compiler/lib/RelayFlowGenerator"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 const commonTransforms = _relayCompiler.IRTransforms.commonTransforms,
       codegenTransforms = _relayCompiler.IRTransforms.codegenTransforms,
@@ -22,6 +23,7 @@ const commonTransforms = _relayCompiler.IRTransforms.commonTransforms,
       printTransforms = _relayCompiler.IRTransforms.printTransforms,
       queryTransforms = _relayCompiler.IRTransforms.queryTransforms,
       schemaExtensions = _relayCompiler.IRTransforms.schemaExtensions;
+
 function getWriter(baseDir) {
   return (config, ...args) => {
     const cfg = typeof config === 'object' ? config : {
@@ -32,7 +34,7 @@ function getWriter(baseDir) {
       sourceControl: args[3],
       reporter: args[4]
     };
-    return new _relayCompiler.FileWriter(_extends({}, cfg, {
+    return new _relayCompiler.FileWriter(_objectSpread({}, cfg, {
       config: {
         baseDir,
         compilerTransforms: {
@@ -43,9 +45,11 @@ function getWriter(baseDir) {
           queryTransforms
         },
         customScalars: {},
-        formatModule: _formatGeneratedModule2.default,
+        formatModule: _formatGeneratedModule.default,
         inputFieldWhiteListForFlow: [],
         schemaExtensions,
+        extension: 'js',
+        typeGenerator: _RelayFlowGenerator.default,
         useHaste: false
       }
     }));

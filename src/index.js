@@ -1,6 +1,6 @@
 // @flow
 
-import {Runner, JSModuleParser, ConsoleReporter} from 'relay-compiler'
+import {Runner, JSModuleParser} from 'relay-compiler'
 
 let GraphQLLib // Support pre 1.6 relay
 try {
@@ -21,6 +21,25 @@ import getFilepathsFromGlob from './getFilepathsFromGlob'
 
 import type {GraphQLSchema} from 'graphql'
 import type {Compiler} from 'webpack'
+
+// Was using a ConsoleReporter with quiet true (which is essentially a no-op)
+// This implements graphql-compiler GraphQLReporter
+// https://github.com/facebook/relay/blob/v1.7.0/packages/graphql-compiler/reporters/GraphQLReporter.js
+// Not familiar enough with flow yet to get that working
+class TemporaryReporter {
+  reportMessage(message: string): void {
+    //process.stdout.write('Report message: ' + message + '\n');
+  }
+
+  reportTime(name: string, ms: number): void {
+    //process.stdout.write('Report time: ' + name + ' ' + ms + '\n');
+  }
+
+  reportError(caughtLocation: string, error: Error): void {
+    // process.stdout.write('Report errpr: ' + caughtLocation + ' ' + error.toString() + '\n');
+    throw error
+  }
+}
 
 class RelayCompilerWebpackPlugin {
   runner: Runner
@@ -133,7 +152,7 @@ class RelayCompilerWebpackPlugin {
       const runner = new Runner({
         parserConfigs: this.parserConfigs,
         writerConfigs: this.writerConfigs,
-        reporter: new ConsoleReporter({quiet: true}),
+        reporter: new TemporaryReporter(),
         onlyValidate: false,
         skipPersist: true
       })

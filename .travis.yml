@@ -8,6 +8,7 @@ node_js:
   - "7"
   - "8"
   - "9"
+  - "10"
 
 before_install:
   - curl -o- -L https://yarnpkg.com/install.sh
