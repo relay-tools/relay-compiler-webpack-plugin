@@ -2,6 +2,8 @@
 
 var _relayCompiler = require("relay-compiler");
 
+var _graphqlCompiler = require("graphql-compiler");
+
 var _fs = _interopRequireDefault(require("fs"));
 
 var _path = _interopRequireDefault(require("path"));
@@ -24,17 +26,6 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-let GraphQLLib; // Support pre 1.6 relay
-
-try {
-  GraphQLLib = require('graphql-compiler');
-} catch (e) {
-  // $FlowFixMe
-  GraphQLLib = require('relay-compiler/lib/GraphQLCompilerPublic');
-}
-
-const DotGraphQLParser = GraphQLLib.DotGraphQLParser;
-
 // Was using a ConsoleReporter with quiet true (which is essentially a no-op)
 // This implements graphql-compiler GraphQLReporter
 // https://github.com/facebook/relay/blob/v1.7.0/packages/graphql-compiler/reporters/GraphQLReporter.js
@@ -47,7 +38,7 @@ class TemporaryReporter {
   }
 
   reportError(caughtLocation, error) {
-    // process.stdout.write('Report errpr: ' + caughtLocation + ' ' + error.toString() + '\n');
+    // process.stdout.write('Report error: ' + caughtLocation + ' ' + error.toString() + '\n');
     throw error;
   }
 
@@ -67,7 +58,7 @@ class RelayCompilerWebpackPlugin {
       },
       graphql: {
         baseDir: '',
-        getParser: DotGraphQLParser.getParser,
+        getParser: _graphqlCompiler.DotGraphQLParser.getParser,
         getSchema: () => {},
         filepaths: null
       }

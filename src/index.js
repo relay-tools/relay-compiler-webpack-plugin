@@ -1,15 +1,7 @@
 // @flow
 
 import {Runner, JSModuleParser} from 'relay-compiler'
-
-let GraphQLLib // Support pre 1.6 relay
-try {
-  GraphQLLib = require('graphql-compiler')
-} catch (e) {
-  // $FlowFixMe
-  GraphQLLib = require('relay-compiler/lib/GraphQLCompilerPublic')
-}
-const DotGraphQLParser = GraphQLLib.DotGraphQLParser
+import {DotGraphQLParser} from 'graphql-compiler'
 
 import fs from 'fs'
 import path from 'path'
@@ -36,7 +28,7 @@ class TemporaryReporter {
   }
 
   reportError(caughtLocation: string, error: Error): void {
-    // process.stdout.write('Report errpr: ' + caughtLocation + ' ' + error.toString() + '\n');
+    // process.stdout.write('Report error: ' + caughtLocation + ' ' + error.toString() + '\n');
     throw error
   }
 }
