@@ -1,6 +1,6 @@
 {
   "name": "relay-compiler-webpack-plugin",
-  "version": "1.0.2",
+  "version": "2.0.0-rc.2",
   "description": "Automatically run the Relay Compiler from Webpack",
   "repository": {
     "type": "git",
@@ -24,12 +24,12 @@
     "prepublishOnly": "yarn clean && yarn build"
   },
   "peerDependencies": {
-    "relay-compiler": "^1.7.0",
+    "relay-compiler": "^2.0.0",
     "webpack": ">=3.0.0"
   },
   "dependencies": {
     "fast-glob": "~2.2.0",
-    "graphql": "^0.13.2"
+    "graphql": "14"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
@@ -55,7 +55,7 @@
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-relay": "^1.7.0",
-    "relay-compiler": "^1.7.0",
+    "relay-compiler": "^2.0.0-rc.1",
     "rimraf": "^2.6.2",
     "standard": "^12.0.1",
     "webpack": "^4.5.0"
