@@ -1,14 +1,14 @@
 // @flow
 
-import { Runner, JSModuleParser } from 'relay-compiler'
+import { Runner } from 'relay-compiler'
 import RelayLanguagePluginJavaScript from 'relay-compiler/lib/RelayLanguagePluginJavaScript'
+import RelaySourceModuleParser from 'relay-compiler/lib/RelaySourceModuleParser'
 import { DotGraphQLParser } from 'graphql-compiler'
 
 import fs from 'fs'
 import path from 'path'
 
 import getSchema from './getSchema'
-import getFileFilter from './getFileFilter'
 import getWriter from './getWriter'
 import getFilepathsFromGlob from './getFilepathsFromGlob'
 
@@ -19,7 +19,7 @@ import type { Compiler } from 'webpack'
 // This implements graphql-compiler GraphQLReporter
 // https://github.com/facebook/relay/blob/v1.7.0/packages/graphql-compiler/reporters/GraphQLReporter.js
 // Wasn't able to find a way to import the GraphQLReporter interface to declare that it is implemented
-class TemporaryReporter {
+class RaiseErrorsReporter {
   reportMessage (message: string): void {
     // process.stdout.write('Report message: ' + message + '\n');
   }
@@ -35,41 +35,18 @@ class TemporaryReporter {
 }
 
 class RelayCompilerWebpackPlugin {
-  runner: Runner
+  parserConfigs: {}
 
-  parserConfigs = {
-    js: {
-      baseDir: '',
-      getFileFilter,
-      getParser: JSModuleParser.getParser,
-      getSchema: () => {},
-      filepaths: null
-    },
-    graphql: {
-      baseDir: '',
-      getParser: DotGraphQLParser.getParser,
-      getSchema: () => {},
-      filepaths: null
-    }
-  }
-
-  writerConfigs = {
-    js: {
-      getWriter: (...any: any) => {},
-      isGeneratedFile: (filePath: string) =>
-        filePath.endsWith('.js') && filePath.includes('__generated__'),
-      parser: 'js',
-      baseParsers: ['graphql']
-    }
-  }
+  writerConfigs: {}
 
   constructor (options: {
     schema: string | GraphQLSchema,
     src: string,
     getParser?: Function,
     extensions: Array<string>,
-    include: Array<String>,
-    exclude: Array<String>
+    include: Array<string>,
+    exclude: Array<string>,
+    languagePlugin?: Function
   }) {
     if (!options) {
       throw new Error('You must provide options to RelayCompilerWebpackPlugin.')
@@ -93,8 +70,13 @@ class RelayCompilerWebpackPlugin {
       throw new Error(`Could not find the [src] provided (${options.src})`)
     }
 
+    const language = (options.languagePlugin || RelayLanguagePluginJavaScript)()
+
     const extensions =
-      options.extensions !== undefined ? options.extensions : ['js']
+      options.extensions !== undefined
+        ? options.extensions
+        : language.inputExtensions
+    const sourceParserName = extensions.join('/')
     const include = options.include !== undefined ? options.include : ['**']
     const exclude =
       options.exclude !== undefined
@@ -106,43 +88,101 @@ class RelayCompilerWebpackPlugin {
           '**/__generated__/**'
         ]
 
-    const fileOptions = {
-      extensions,
+    this.parserConfigs = this.createParserConfigs({
+      sourceParserName,
+      languagePlugin: language,
       include,
-      exclude
-    }
-    const schemaFn =
-      typeof options.schema === 'string'
-        ? () => getSchema(options.schema)
-        : () => options.schema
-
-    if (options.getParser !== undefined) {
-      this.parserConfigs.js.getParser = options.getParser
-    }
-    this.parserConfigs.js.baseDir = options.src
-    this.parserConfigs.js.getSchema = schemaFn
-    this.parserConfigs.js.filepaths = getFilepathsFromGlob(
-      options.src,
-      fileOptions
-    )
-    const languagePlugin = RelayLanguagePluginJavaScript()
-    this.writerConfigs.js.getWriter = getWriter(languagePlugin, options.src)
-
-    this.parserConfigs.graphql.baseDir = options.src
-    this.parserConfigs.graphql.getSchema = schemaFn
-    this.parserConfigs.graphql.filepaths = getFilepathsFromGlob(options.src, {
-      ...fileOptions,
-      extensions: ['graphql']
+      exclude,
+      schema: options.schema,
+      getParser: options.getParser,
+      baseDir: options.src,
+      extensions
     })
+
+    this.writerConfigs = this.createWriterConfigs({
+      baseDir: options.src,
+      sourceParserName,
+      languagePlugin: language
+    })
+  }
+
+  createParserConfigs ({
+    baseDir,
+    getParser,
+    sourceParserName,
+    languagePlugin,
+    include,
+    exclude,
+    schema,
+    extensions
+  }: {
+    baseDir: string,
+    getParser?: Function,
+    sourceParserName: string,
+    languagePlugin: any,
+    schema: string | GraphQLSchema,
+    include: Array<string>,
+    exclude: Array<string>,
+    extensions: Array<string>
+  }) {
+    const schemaFn =
+      typeof schema === 'string' ? () => getSchema(schema) : () => schema
+
+    const sourceModuleParser = RelaySourceModuleParser(
+      languagePlugin.findGraphQLTags
+    )
+
+    const fileOptions = { extensions, include, exclude }
+
+    return {
+      [sourceParserName]: {
+        baseDir,
+        getFileFilter: sourceModuleParser.getFileFilter,
+        getParser: getParser || sourceModuleParser.getParser,
+        getSchema: schemaFn,
+        filepaths: getFilepathsFromGlob(baseDir, fileOptions)
+      },
+      graphql: {
+        baseDir,
+        getParser: DotGraphQLParser.getParser,
+        getSchema: schemaFn,
+        filepaths: getFilepathsFromGlob(baseDir, {
+          ...fileOptions,
+          extensions: ['graphql']
+        })
+      }
+    }
+  }
+
+  createWriterConfigs ({
+    baseDir,
+    sourceParserName,
+    languagePlugin
+  }: {
+    baseDir: string,
+    sourceParserName: string,
+    languagePlugin: any
+  }) {
+    return {
+      [languagePlugin.outputExtension]: {
+        getWriter: getWriter(languagePlugin, baseDir),
+        isGeneratedFile: (filePath: string) =>
+          filePath.endsWith('.graphql.' + languagePlugin.outputExtension) &&
+          filePath.includes('__generated__'),
+        parser: sourceParserName,
+        baseParsers: ['graphql']
+      }
+    }
   }
 
   async compile (issuer: string, request: string) {
     const errors = []
     try {
+      // Can this be set up in constructor and use same instance every time?
       const runner = new Runner({
         parserConfigs: this.parserConfigs,
         writerConfigs: this.writerConfigs,
-        reporter: new TemporaryReporter(),
+        reporter: new RaiseErrorsReporter(),
         onlyValidate: false,
         skipPersist: true
       })
