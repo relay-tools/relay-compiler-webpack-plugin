@@ -1,6 +1,8 @@
-import { FileWriter, IRTransforms } from 'relay-compiler'
-import type { Map } from 'immutable'
-import type { GraphQLSchema } from 'graphql'
+// @flow
+
+import type { WriteFilesOptions } from 'graphql-compiler'
+import RelayFileWriter from 'relay-compiler/lib/RelayFileWriter'
+import RelayIRTransforms from 'relay-compiler/lib/RelayIRTransforms'
 
 const {
   commonTransforms,
@@ -9,49 +11,43 @@ const {
   printTransforms,
   queryTransforms,
   schemaExtensions
-} = IRTransforms
+} = RelayIRTransforms
 
-interface WriterConfig {
-  onlyValidate: boolean;
-  schema: GraphQLSchema;
-  documents: Map<string, Object>;
-  baseDocuments: Map<string, Object>;
-  sourceControl: any;
-  reporter: any;
-}
-
-export default function getWriter (languagePlugin: any, baseDir: string) {
-  return (config: WriterConfig | boolean, ...args) => {
-    const cfg =
-      typeof config === 'object'
-        ? config
-        : {
-          onlyValidate: config,
-          schema: args[0],
-          documents: args[1],
-          baseDocuments: args[2],
-          sourceControl: args[3],
-          reporter: args[4]
-        }
-    return new FileWriter({
-      ...cfg,
-      config: {
-        baseDir,
-        compilerTransforms: {
-          commonTransforms,
-          codegenTransforms,
-          fragmentTransforms,
-          printTransforms,
-          queryTransforms
-        },
-        customScalars: {},
-        formatModule: languagePlugin.formatModule,
-        inputFieldWhiteListForFlow: [],
-        schemaExtensions,
-        extension: languagePlugin.outputExtension,
-        typeGenerator: languagePlugin.typeGenerator,
-        useHaste: false
-      }
-    })
-  }
-}
+export default (
+  baseDir: string,
+  languagePlugin: any,
+  noFutureProofEnums: boolean
+) => ({
+  onlyValidate,
+  schema,
+  documents,
+  baseDocuments,
+  sourceControl,
+  reporter
+}: WriteFilesOptions) =>
+  RelayFileWriter.writeAll({
+    config: {
+      baseDir,
+      compilerTransforms: {
+        commonTransforms,
+        codegenTransforms,
+        fragmentTransforms,
+        printTransforms,
+        queryTransforms
+      },
+      customScalars: {},
+      formatModule: languagePlugin.formatModule,
+      optionalInputFieldsForFlow: [],
+      schemaExtensions,
+      useHaste: false,
+      noFutureProofEnums,
+      extension: languagePlugin.outputExtension,
+      typeGenerator: languagePlugin.typeGenerator
+    },
+    onlyValidate,
+    schema,
+    baseDocuments,
+    documents,
+    reporter,
+    sourceControl
+  })

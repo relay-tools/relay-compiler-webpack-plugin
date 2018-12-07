@@ -8,7 +8,7 @@ import RelayCompilerWebpackPlugin from '../src/index'
 import createWebpackConfig from './fixtures/normalCase/createWebpackConfig'
 import normaliseConfigForWebpackVersion from './support/normaliseConfigForWebpackVersion'
 
-jest.setTimeout(30000)
+jest.setTimeout(20000)
 
 describe('RelayCompilerWebpackPlugin', () => {
   const srcDir = path.resolve(__dirname, 'fixtures', 'normalCase', 'src')
