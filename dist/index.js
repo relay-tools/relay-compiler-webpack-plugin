@@ -31,10 +31,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 // https://github.com/facebook/relay/blob/v1.7.0/packages/graphql-compiler/reporters/GraphQLReporter.js
 // Not familiar enough with flow yet to get that working
 class TemporaryReporter {
-  reportMessage(message) {//process.stdout.write('Report message: ' + message + '\n');
+  reportMessage(message) {// process.stdout.write('Report message: ' + message + '\n');
   }
 
-  reportTime(name, ms) {//process.stdout.write('Report time: ' + name + ' ' + ms + '\n');
+  reportTime(name, ms) {// process.stdout.write('Report time: ' + name + ' ' + ms + '\n');
   }
 
   reportError(caughtLocation, error) {
@@ -102,7 +102,11 @@ class RelayCompilerWebpackPlugin {
       exclude
     };
     const schemaFn = typeof options.schema === 'string' ? () => (0, _getSchema.default)(options.schema) : () => options.schema;
-    if (options.getParser !== undefined) this.parserConfigs.js.getParser = options.getParser;
+
+    if (options.getParser !== undefined) {
+      this.parserConfigs.js.getParser = options.getParser;
+    }
+
     this.parserConfigs.js.baseDir = options.src;
     this.parserConfigs.js.getSchema = schemaFn;
     this.parserConfigs.js.filepaths = (0, _getFilepathsFromGlob.default)(options.src, fileOptions);

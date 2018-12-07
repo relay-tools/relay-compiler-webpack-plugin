@@ -12,9 +12,7 @@ export default ({ RelayCompilerWebpackPlugin }) => ({
       {
         test: /\.js$/,
         exclude: path.join(__dirname, 'node_modules'),
-        use: [
-          {loader: "babel-loader"}
-        ]
+        use: [{ loader: 'babel-loader' }]
       }
     ]
   },

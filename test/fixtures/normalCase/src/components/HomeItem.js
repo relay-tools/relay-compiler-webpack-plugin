@@ -1,7 +1,11 @@
-import React from 'react';
-import {createFragmentContainer} from 'react-relay';
+import React from 'react'
+import { graphql, createFragmentContainer } from 'react-relay'
 
-const HomeItem = ({person: {id, fullName}}) => <li><a href={`/about/${id}/`}>{fullName}</a></li>;
+const HomeItem = ({ person: { id, fullName } }) => (
+  <li>
+    <a href={`/about/${id}/`}>{fullName}</a>
+  </li>
+)
 
 export default createFragmentContainer(
   HomeItem,
@@ -11,4 +15,4 @@ export default createFragmentContainer(
       fullName
     }
   `
-);
+)
