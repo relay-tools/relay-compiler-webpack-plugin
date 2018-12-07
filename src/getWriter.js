@@ -1,6 +1,4 @@
 import { FileWriter, IRTransforms } from 'relay-compiler'
-import formatGeneratedModule from 'relay-compiler/lib/formatGeneratedModule'
-import RelayFlowGenerator from 'relay-compiler/lib/RelayFlowGenerator'
 import type { Map } from 'immutable'
 import type { GraphQLSchema } from 'graphql'
 
@@ -22,7 +20,7 @@ interface WriterConfig {
   reporter: any;
 }
 
-export default function getWriter (baseDir: string) {
+export default function getWriter (languagePlugin: any, baseDir: string) {
   return (config: WriterConfig | boolean, ...args) => {
     const cfg =
       typeof config === 'object'
@@ -47,11 +45,11 @@ export default function getWriter (baseDir: string) {
           queryTransforms
         },
         customScalars: {},
-        formatModule: formatGeneratedModule,
+        formatModule: languagePlugin.formatModule,
         inputFieldWhiteListForFlow: [],
         schemaExtensions,
-        extension: 'js',
-        typeGenerator: RelayFlowGenerator,
+        extension: languagePlugin.outputExtension,
+        typeGenerator: languagePlugin.typeGenerator,
         useHaste: false
       }
     })

@@ -2,6 +2,8 @@
 
 var _relayCompiler = require("relay-compiler");
 
+var _RelayLanguagePluginJavaScript = _interopRequireDefault(require("relay-compiler/lib/RelayLanguagePluginJavaScript"));
+
 var _graphqlCompiler = require("graphql-compiler");
 
 var _fs = _interopRequireDefault(require("fs"));
@@ -29,7 +31,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 // Was using a ConsoleReporter with quiet true (which is essentially a no-op)
 // This implements graphql-compiler GraphQLReporter
 // https://github.com/facebook/relay/blob/v1.7.0/packages/graphql-compiler/reporters/GraphQLReporter.js
-// Not familiar enough with flow yet to get that working
+// Wasn't able to find a way to import the GraphQLReporter interface to declare that it is implemented
 class TemporaryReporter {
   reportMessage(message) {// process.stdout.write('Report message: ' + message + '\n');
   }
@@ -110,7 +112,8 @@ class RelayCompilerWebpackPlugin {
     this.parserConfigs.js.baseDir = options.src;
     this.parserConfigs.js.getSchema = schemaFn;
     this.parserConfigs.js.filepaths = (0, _getFilepathsFromGlob.default)(options.src, fileOptions);
-    this.writerConfigs.js.getWriter = (0, _getWriter.default)(options.src);
+    const languagePlugin = (0, _RelayLanguagePluginJavaScript.default)();
+    this.writerConfigs.js.getWriter = (0, _getWriter.default)(languagePlugin, options.src);
     this.parserConfigs.graphql.baseDir = options.src;
     this.parserConfigs.graphql.getSchema = schemaFn;
     this.parserConfigs.graphql.filepaths = (0, _getFilepathsFromGlob.default)(options.src, _objectSpread({}, fileOptions, {

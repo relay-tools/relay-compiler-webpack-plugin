@@ -1,6 +1,7 @@
 // @flow
 
 import { Runner, JSModuleParser } from 'relay-compiler'
+import RelayLanguagePluginJavaScript from 'relay-compiler/lib/RelayLanguagePluginJavaScript'
 import { DotGraphQLParser } from 'graphql-compiler'
 
 import fs from 'fs'
@@ -17,7 +18,7 @@ import type { Compiler } from 'webpack'
 // Was using a ConsoleReporter with quiet true (which is essentially a no-op)
 // This implements graphql-compiler GraphQLReporter
 // https://github.com/facebook/relay/blob/v1.7.0/packages/graphql-compiler/reporters/GraphQLReporter.js
-// Not familiar enough with flow yet to get that working
+// Wasn't able to find a way to import the GraphQLReporter interface to declare that it is implemented
 class TemporaryReporter {
   reportMessage (message: string): void {
     // process.stdout.write('Report message: ' + message + '\n');
@@ -124,7 +125,8 @@ class RelayCompilerWebpackPlugin {
       options.src,
       fileOptions
     )
-    this.writerConfigs.js.getWriter = getWriter(options.src)
+    const languagePlugin = RelayLanguagePluginJavaScript()
+    this.writerConfigs.js.getWriter = getWriter(languagePlugin, options.src)
 
     this.parserConfigs.graphql.baseDir = options.src
     this.parserConfigs.graphql.getSchema = schemaFn
