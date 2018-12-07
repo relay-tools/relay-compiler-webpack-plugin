@@ -6,6 +6,8 @@ import normaliseConfigForWebpackVersion from './support/normaliseConfigForWebpac
 import createWebpackConfig from './fixtures/normalCase/createWebpackConfig'
 import webpack from 'webpack'
 
+jest.setTimeout(30000)
+
 describe('RelayCompilerWebpackPlugin', () => {
   it('throws if an empty constructor', () => {
     expect(() => new RelayCompilerWebpackPlugin()).toThrow(
