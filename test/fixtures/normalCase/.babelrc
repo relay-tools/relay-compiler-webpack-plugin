@@ -1,0 +1,9 @@
+{
+  "plugins": [
+    "babel-plugin-relay"
+  ],
+  "presets": [
+    "@babel/preset-react",
+    "@babel/preset-env"
+  ]
+}

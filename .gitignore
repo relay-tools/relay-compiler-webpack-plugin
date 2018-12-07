@@ -1,2 +1,3 @@
 node_modules
-example/**/__generated__
+/test/fixtures/**/dist/
+/test/fixtures/**/__generated__/

@@ -83,7 +83,7 @@ class RelayCompilerWebpackPlugin {
 
     if (typeof options.schema === 'string' && !fs.existsSync(options.schema)) {
       throw new Error(
-        'Could not find the Schema. Have you provided a fully resolved path?'
+        `Could not find the [schema] provided (${options.schema}).`
       )
     }
 
@@ -93,7 +93,7 @@ class RelayCompilerWebpackPlugin {
 
     if (!fs.existsSync(options.src)) {
       throw new Error(
-        'Could not find your `src` path. Have you provided a fully resolved path?'
+        `Could not find the [src] provided (${options.src})`
       )
     }
 

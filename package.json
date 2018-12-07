@@ -15,7 +15,8 @@
     "build": "babel src --out-dir dist",
     "flow": "flow",
     "format": "prettier-standard 'src/**/*.js'",
-    "test": "yarn prepublish",
+    "test": "jest test --env node",
+    "test:update": "jest test --env node -u",
     "prepublish": "yarn flow && yarn clean && yarn build"
   },
   "peerDependencies": {
@@ -32,8 +33,17 @@
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-flow": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^23.6.0",
+    "babel-loader": "^8.0.4",
+    "babel-plugin-relay": "^1.7.0",
     "flow-bin": "0.84.0",
+    "jest": "^23.6.0",
     "prettier-standard": "^8.0.1",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "react-relay": "^1.7.0",
     "relay-compiler": "^1.7.0",
     "rimraf": "^2.6.2",
     "webpack": "^4.5.0"

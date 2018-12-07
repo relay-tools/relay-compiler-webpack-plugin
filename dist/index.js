@@ -82,7 +82,7 @@ class RelayCompilerWebpackPlugin {
     }
 
     if (typeof options.schema === 'string' && !_fs.default.existsSync(options.schema)) {
-      throw new Error('Could not find the Schema. Have you provided a fully resolved path?');
+      throw new Error(`Could not find the [schema] provided (${options.schema}).`);
     }
 
     if (!options.src) {
@@ -90,7 +90,7 @@ class RelayCompilerWebpackPlugin {
     }
 
     if (!_fs.default.existsSync(options.src)) {
-      throw new Error('Could not find your `src` path. Have you provided a fully resolved path?');
+      throw new Error(`Could not find the [src] provided (${options.src})`);
     }
 
     const extensions = options.extensions !== undefined ? options.extensions : ['js'];
