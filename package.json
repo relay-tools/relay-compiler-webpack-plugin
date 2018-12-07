@@ -17,6 +17,7 @@
     "format": "prettier-standard 'src/**/*.js'",
     "test": "jest test --env node",
     "test:update": "jest test --env node -u",
+    "test:coverage": "jest test --env node --coverage --coverageDirectory ./reports src",
     "prepublish": "yarn flow && yarn clean && yarn build"
   },
   "peerDependencies": {
@@ -62,6 +63,12 @@
     ],
     "plugins": [
       "@babel/plugin-proposal-class-properties"
+    ]
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/"
     ]
   }
 }
