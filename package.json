@@ -13,8 +13,8 @@
   "scripts": {
     "clean": "rimraf dist",
     "flow": "flow",
-    "format": "prettier-standard 'src/**/*.js'",
-    "format:check": "standard 'src/**/*.js'",
+    "format": "prettier-standard 'src/**/*.js' 'test/**/*.js'",
+    "format:check": "standard 'src/**/*.js' 'test/**/*.js'",
     "lint": "eslint --fix 'src/**/*.js'",
     "lint:check": "eslint 'src/**/*.js'",
     "test": "jest test --env node",
