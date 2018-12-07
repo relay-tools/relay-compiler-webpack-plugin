@@ -6,6 +6,7 @@ import path from 'path'
 import rimraf from 'rimraf'
 import RelayCompilerWebpackPlugin from '../src/index'
 import createWebpackConfig from './fixtures/normalCase/createWebpackConfig'
+import normaliseConfigForWebpackVersion from './support/normaliseConfigForWebpackVersion'
 
 jest.setTimeout(30000)
 
@@ -17,7 +18,7 @@ describe('RelayCompilerWebpackPlugin', () => {
   })
 
   it('generates graphql files correctly for a normal example', done => {
-    const webpackConfig = createWebpackConfig(RelayCompilerWebpackPlugin)
+    const webpackConfig = normaliseConfigForWebpackVersion(createWebpackConfig({ RelayCompilerWebpackPlugin }))
 
     webpack(webpackConfig, (err, stats) => {
       expect(err).toBeFalsy()
