@@ -6,6 +6,9 @@
     "type": "git",
     "url": "https://github.com/danielholmes/relay-compiler-webpack-plugin"
   },
+  "files": [
+    "dist"
+  ],
   "main": "dist/index.js",
   "jsnext/main": "src/index.js",
   "author": "Daniel Holmes",
