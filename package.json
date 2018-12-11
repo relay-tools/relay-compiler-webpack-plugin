@@ -1,6 +1,6 @@
 {
   "name": "relay-compiler-webpack-plugin",
-  "version": "2.0.0-rc.2",
+  "version": "2.0.0-rc.3",
   "description": "Automatically run the Relay Compiler from Webpack",
   "repository": {
     "type": "git",
@@ -8,6 +8,9 @@
   },
   "main": "dist/index.js",
   "jsnext/main": "src/index.js",
+  "files": [
+    "dist"
+  ],
   "author": "Daniel Holmes",
   "license": "BSD-3-Clause",
   "scripts": {
