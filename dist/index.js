@@ -52,6 +52,8 @@ class RelayCompilerWebpackPlugin {
 
     _defineProperty(this, "writerConfigs", void 0);
 
+    _defineProperty(this, "languagePlugin", void 0);
+
     if (!options) {
       throw new Error('You must provide options to RelayCompilerWebpackPlugin.');
     }
@@ -93,6 +95,7 @@ class RelayCompilerWebpackPlugin {
       sourceParserName,
       languagePlugin: language
     });
+    this.languagePlugin = language;
   }
 
   createParserConfigs({
@@ -162,7 +165,7 @@ class RelayCompilerWebpackPlugin {
           onlyValidate: false,
           skipPersist: true
         });
-        return runner.compile('js');
+        return runner.compile(_this.languagePlugin.outputExtension);
       } catch (error) {
         errors.push(error);
       }
