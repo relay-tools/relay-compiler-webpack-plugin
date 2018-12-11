@@ -2,6 +2,7 @@
 
 import { Runner } from 'relay-compiler'
 import RelayLanguagePluginJavaScript from 'relay-compiler/lib/RelayLanguagePluginJavaScript'
+import type { PluginInterface } from 'relay-compiler/lib/RelayLanguagePluginInterface'
 import RelaySourceModuleParser from 'relay-compiler/lib/RelaySourceModuleParser'
 import { DotGraphQLParser } from 'graphql-compiler'
 
@@ -46,7 +47,7 @@ class RelayCompilerWebpackPlugin {
     extensions: Array<string>,
     include: Array<string>,
     exclude: Array<string>,
-    languagePlugin?: Function
+    languagePlugin?: () => PluginInterface
   }) {
     if (!options) {
       throw new Error('You must provide options to RelayCompilerWebpackPlugin.')
@@ -119,7 +120,7 @@ class RelayCompilerWebpackPlugin {
     baseDir: string,
     getParser?: Function,
     sourceParserName: string,
-    languagePlugin: any,
+    languagePlugin: PluginInterface,
     schema: string | GraphQLSchema,
     include: Array<string>,
     exclude: Array<string>,
@@ -161,7 +162,7 @@ class RelayCompilerWebpackPlugin {
   }: {
     baseDir: string,
     sourceParserName: string,
-    languagePlugin: any
+    languagePlugin: PluginInterface
   }) {
     return {
       [languagePlugin.outputExtension]: {
