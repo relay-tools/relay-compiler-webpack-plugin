@@ -2,6 +2,16 @@
   "name": "relay-compiler-webpack-plugin",
   "version": "2.0.0-rc.4",
   "description": "Automatically run the Relay Compiler from Webpack",
+  "keywords": [
+    "relay",
+    "webpack",
+    "webpack3",
+    "webpack4",
+    "react",
+    "reactjs",
+    "relay-compiler",
+    "graphql"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/danielholmes/relay-compiler-webpack-plugin"
