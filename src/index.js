@@ -36,9 +36,9 @@ class RaiseErrorsReporter {
 }
 
 class RelayCompilerWebpackPlugin {
-  parserConfigs: {}
-
-  writerConfigs: {}
+  parserConfigs: {};
+  writerConfigs: {};
+  languagePlugin: PluginInterface;
 
   constructor (options: {
     schema: string | GraphQLSchema,
@@ -105,6 +105,8 @@ class RelayCompilerWebpackPlugin {
       sourceParserName,
       languagePlugin: language
     })
+
+    this.languagePlugin = language
   }
 
   createParserConfigs ({
@@ -187,7 +189,7 @@ class RelayCompilerWebpackPlugin {
         onlyValidate: false,
         skipPersist: true
       })
-      return runner.compile('js')
+      return runner.compile(this.languagePlugin.outputExtension)
     } catch (error) {
       errors.push(error)
     }
