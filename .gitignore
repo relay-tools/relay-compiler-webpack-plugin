@@ -2,3 +2,4 @@ node_modules
 /test/fixtures/**/dist/
 /test/fixtures/**/__generated__/
 /reports
+.DS_Store

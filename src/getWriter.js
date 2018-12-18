@@ -20,7 +20,11 @@ interface WriterConfig {
   reporter: any;
 }
 
-export default function getWriter (languagePlugin: any, baseDir: string) {
+export default function getWriter (
+  languagePlugin: any,
+  baseDir: string,
+  outputDir: ?string
+) {
   return (config: WriterConfig | boolean, ...args) => {
     const cfg =
       typeof config === 'object'
@@ -45,10 +49,11 @@ export default function getWriter (languagePlugin: any, baseDir: string) {
           queryTransforms
         },
         customScalars: {},
+        extension: languagePlugin.outputExtension,
         formatModule: languagePlugin.formatModule,
         inputFieldWhiteListForFlow: [],
+        outputDir,
         schemaExtensions,
-        extension: languagePlugin.outputExtension,
         typeGenerator: languagePlugin.typeGenerator,
         useHaste: false
       }
