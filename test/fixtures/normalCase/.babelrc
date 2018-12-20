@@ -1,7 +1,14 @@
 {
-  "plugins": [
-    "babel-plugin-relay"
-  ],
+  "env": {
+    "artifactDirectoryTest": {
+      "plugins": [
+        ["relay", {
+          "artifactDirectory": "test/fixtures/normalCase/src/__generated__"
+        }]
+      ],
+    }
+  },
+  "plugins": ["relay"],
   "presets": [
     "@babel/preset-react",
     "@babel/preset-env"

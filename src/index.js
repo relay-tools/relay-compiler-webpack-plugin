@@ -36,9 +36,9 @@ class RaiseErrorsReporter {
 }
 
 class RelayCompilerWebpackPlugin {
-  parserConfigs: {};
-  writerConfigs: {};
-  languagePlugin: PluginInterface;
+  parserConfigs: {}
+  writerConfigs: {}
+  languagePlugin: PluginInterface
 
   constructor (options: {
     schema: string | GraphQLSchema,
@@ -47,7 +47,8 @@ class RelayCompilerWebpackPlugin {
     extensions: Array<string>,
     include: Array<string>,
     exclude: Array<string>,
-    languagePlugin?: () => PluginInterface
+    languagePlugin?: () => PluginInterface,
+    artifactDirectory?: string
   }) {
     if (!options) {
       throw new Error('You must provide options to RelayCompilerWebpackPlugin.')
@@ -103,7 +104,8 @@ class RelayCompilerWebpackPlugin {
     this.writerConfigs = this.createWriterConfigs({
       baseDir: options.src,
       sourceParserName,
-      languagePlugin: language
+      languagePlugin: language,
+      artifactDirectory: options.artifactDirectory
     })
 
     this.languagePlugin = language
@@ -160,18 +162,21 @@ class RelayCompilerWebpackPlugin {
   createWriterConfigs ({
     baseDir,
     sourceParserName,
-    languagePlugin
+    languagePlugin,
+    artifactDirectory
   }: {
     baseDir: string,
     sourceParserName: string,
-    languagePlugin: PluginInterface
+    languagePlugin: PluginInterface,
+    artifactDirectory: ?string
   }) {
     return {
       [languagePlugin.outputExtension]: {
         writeFiles: getWriter(
           baseDir,
           languagePlugin,
-          false // noFutureProofEnums
+          false, // noFutureProofEnums
+          artifactDirectory
         ),
         isGeneratedFile: (filePath: string) =>
           filePath.endsWith('.graphql.' + languagePlugin.outputExtension) &&

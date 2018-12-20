@@ -511,3 +511,515 @@ return {
 module.exports = node;
 "
 `;
+
+exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example with --artifactDirectory option 1`] = `
+"/**
+ * @flow
+ * @relayHash 598b70b3a2d4c9e9025a9ec1889162fc
+ */
+
+/* eslint-disable */
+
+'use strict';
+
+/*::
+import type { ConcreteRequest } from 'relay-runtime';
+export type updateFirstNameMutationVariables = {|
+  id: string,
+  firstName: string,
+|};
+export type updateFirstNameMutationResponse = {|
+  +updateFirstName: {|
+    +person: {|
+      +firstName: string,
+      +fullName: string,
+    |}
+  |}
+|};
+export type updateFirstNameMutation = {|
+  variables: updateFirstNameMutationVariables,
+  response: updateFirstNameMutationResponse,
+|};
+*/
+
+
+/*
+mutation updateFirstNameMutation(
+  $id: ID!
+  $firstName: String!
+) {
+  updateFirstName(id: $id, firstName: $firstName) {
+    person {
+      firstName
+      fullName
+      id
+    }
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
+var v0 = [
+  {
+    \\"kind\\": \\"LocalArgument\\",
+    \\"name\\": \\"id\\",
+    \\"type\\": \\"ID!\\",
+    \\"defaultValue\\": null
+  },
+  {
+    \\"kind\\": \\"LocalArgument\\",
+    \\"name\\": \\"firstName\\",
+    \\"type\\": \\"String!\\",
+    \\"defaultValue\\": null
+  }
+],
+v1 = [
+  {
+    \\"kind\\": \\"Variable\\",
+    \\"name\\": \\"firstName\\",
+    \\"variableName\\": \\"firstName\\",
+    \\"type\\": \\"String!\\"
+  },
+  {
+    \\"kind\\": \\"Variable\\",
+    \\"name\\": \\"id\\",
+    \\"variableName\\": \\"id\\",
+    \\"type\\": \\"ID!\\"
+  }
+],
+v2 = {
+  \\"kind\\": \\"ScalarField\\",
+  \\"alias\\": null,
+  \\"name\\": \\"firstName\\",
+  \\"args\\": null,
+  \\"storageKey\\": null
+},
+v3 = {
+  \\"kind\\": \\"ScalarField\\",
+  \\"alias\\": null,
+  \\"name\\": \\"fullName\\",
+  \\"args\\": null,
+  \\"storageKey\\": null
+};
+return {
+  \\"kind\\": \\"Request\\",
+  \\"operationKind\\": \\"mutation\\",
+  \\"name\\": \\"updateFirstNameMutation\\",
+  \\"id\\": null,
+  \\"text\\": \\"mutation updateFirstNameMutation(\\\\n  $id: ID!\\\\n  $firstName: String!\\\\n) {\\\\n  updateFirstName(id: $id, firstName: $firstName) {\\\\n    person {\\\\n      firstName\\\\n      fullName\\\\n      id\\\\n    }\\\\n  }\\\\n}\\\\n\\",
+  \\"metadata\\": {},
+  \\"fragment\\": {
+    \\"kind\\": \\"Fragment\\",
+    \\"name\\": \\"updateFirstNameMutation\\",
+    \\"type\\": \\"Mutation\\",
+    \\"metadata\\": null,
+    \\"argumentDefinitions\\": v0,
+    \\"selections\\": [
+      {
+        \\"kind\\": \\"LinkedField\\",
+        \\"alias\\": null,
+        \\"name\\": \\"updateFirstName\\",
+        \\"storageKey\\": null,
+        \\"args\\": v1,
+        \\"concreteType\\": \\"UpdateFirstNameOutput\\",
+        \\"plural\\": false,
+        \\"selections\\": [
+          {
+            \\"kind\\": \\"LinkedField\\",
+            \\"alias\\": null,
+            \\"name\\": \\"person\\",
+            \\"storageKey\\": null,
+            \\"args\\": null,
+            \\"concreteType\\": \\"Person\\",
+            \\"plural\\": false,
+            \\"selections\\": [
+              v2,
+              v3
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  \\"operation\\": {
+    \\"kind\\": \\"Operation\\",
+    \\"name\\": \\"updateFirstNameMutation\\",
+    \\"argumentDefinitions\\": v0,
+    \\"selections\\": [
+      {
+        \\"kind\\": \\"LinkedField\\",
+        \\"alias\\": null,
+        \\"name\\": \\"updateFirstName\\",
+        \\"storageKey\\": null,
+        \\"args\\": v1,
+        \\"concreteType\\": \\"UpdateFirstNameOutput\\",
+        \\"plural\\": false,
+        \\"selections\\": [
+          {
+            \\"kind\\": \\"LinkedField\\",
+            \\"alias\\": null,
+            \\"name\\": \\"person\\",
+            \\"storageKey\\": null,
+            \\"args\\": null,
+            \\"concreteType\\": \\"Person\\",
+            \\"plural\\": false,
+            \\"selections\\": [
+              v2,
+              v3,
+              {
+                \\"kind\\": \\"ScalarField\\",
+                \\"alias\\": null,
+                \\"name\\": \\"id\\",
+                \\"args\\": null,
+                \\"storageKey\\": null
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+};
+})();
+// prettier-ignore
+(node/*: any*/).hash = '8ea2fcfefe6dc15aea4c7e70663a11d8';
+module.exports = node;
+"
+`;
+
+exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example with --artifactDirectory option 2`] = `
+"/**
+ * @flow
+ */
+
+/* eslint-disable */
+
+'use strict';
+
+/*::
+import type { ConcreteFragment } from 'relay-runtime';
+import type { FragmentReference } from \\"relay-runtime\\";
+declare export opaque type HomeItem_person$ref: FragmentReference;
+export type HomeItem_person = {|
+  +id: string,
+  +fullName: string,
+  +$refType: HomeItem_person$ref,
+|};
+*/
+
+
+const node/*: ConcreteFragment*/ = {
+  \\"kind\\": \\"Fragment\\",
+  \\"name\\": \\"HomeItem_person\\",
+  \\"type\\": \\"Person\\",
+  \\"metadata\\": null,
+  \\"argumentDefinitions\\": [],
+  \\"selections\\": [
+    {
+      \\"kind\\": \\"ScalarField\\",
+      \\"alias\\": null,
+      \\"name\\": \\"id\\",
+      \\"args\\": null,
+      \\"storageKey\\": null
+    },
+    {
+      \\"kind\\": \\"ScalarField\\",
+      \\"alias\\": null,
+      \\"name\\": \\"fullName\\",
+      \\"args\\": null,
+      \\"storageKey\\": null
+    }
+  ]
+};
+// prettier-ignore
+(node/*: any*/).hash = 'bd415f20a6f47ec9a0098ed50db4d1df';
+module.exports = node;
+"
+`;
+
+exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example with --artifactDirectory option 3`] = `
+"/**
+ * @flow
+ */
+
+/* eslint-disable */
+
+'use strict';
+
+/*::
+import type { ConcreteFragment } from 'relay-runtime';
+import type { HomeItem_person$ref } from \\"./HomeItem_person.graphql\\";
+import type { FragmentReference } from \\"relay-runtime\\";
+declare export opaque type Home_people$ref: FragmentReference;
+export type Home_people = $ReadOnlyArray<{|
+  +id: string,
+  +$fragmentRefs: HomeItem_person$ref,
+  +$refType: Home_people$ref,
+|}>;
+*/
+
+
+const node/*: ConcreteFragment*/ = {
+  \\"kind\\": \\"Fragment\\",
+  \\"name\\": \\"Home_people\\",
+  \\"type\\": \\"Person\\",
+  \\"metadata\\": {
+    \\"plural\\": true
+  },
+  \\"argumentDefinitions\\": [],
+  \\"selections\\": [
+    {
+      \\"kind\\": \\"ScalarField\\",
+      \\"alias\\": null,
+      \\"name\\": \\"id\\",
+      \\"args\\": null,
+      \\"storageKey\\": null
+    },
+    {
+      \\"kind\\": \\"FragmentSpread\\",
+      \\"name\\": \\"HomeItem_person\\",
+      \\"args\\": null
+    }
+  ]
+};
+// prettier-ignore
+(node/*: any*/).hash = 'e4f600a68462819c933487c314d53ed6';
+module.exports = node;
+"
+`;
+
+exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example with --artifactDirectory option 4`] = `
+"/**
+ * @flow
+ * @relayHash 9af84366ab181210887699f71fb392c1
+ */
+
+/* eslint-disable */
+
+'use strict';
+
+/*::
+import type { ConcreteRequest } from 'relay-runtime';
+import type { Home_people$ref } from \\"./Home_people.graphql\\";
+export type AppQueryVariables = {||};
+export type AppQueryResponse = {|
+  +people: ?$ReadOnlyArray<?{|
+    +$fragmentRefs: Home_people$ref
+  |}>
+|};
+export type AppQuery = {|
+  variables: AppQueryVariables,
+  response: AppQueryResponse,
+|};
+*/
+
+
+/*
+query AppQuery {
+  people {
+    ...Home_people
+    id
+  }
+}
+
+fragment Home_people on Person {
+  id
+  ...HomeItem_person
+}
+
+fragment HomeItem_person on Person {
+  id
+  fullName
+}
+*/
+
+const node/*: ConcreteRequest*/ = {
+  \\"kind\\": \\"Request\\",
+  \\"operationKind\\": \\"query\\",
+  \\"name\\": \\"AppQuery\\",
+  \\"id\\": null,
+  \\"text\\": \\"query AppQuery {\\\\n  people {\\\\n    ...Home_people\\\\n    id\\\\n  }\\\\n}\\\\n\\\\nfragment Home_people on Person {\\\\n  id\\\\n  ...HomeItem_person\\\\n}\\\\n\\\\nfragment HomeItem_person on Person {\\\\n  id\\\\n  fullName\\\\n}\\\\n\\",
+  \\"metadata\\": {},
+  \\"fragment\\": {
+    \\"kind\\": \\"Fragment\\",
+    \\"name\\": \\"AppQuery\\",
+    \\"type\\": \\"Query\\",
+    \\"metadata\\": null,
+    \\"argumentDefinitions\\": [],
+    \\"selections\\": [
+      {
+        \\"kind\\": \\"LinkedField\\",
+        \\"alias\\": null,
+        \\"name\\": \\"people\\",
+        \\"storageKey\\": null,
+        \\"args\\": null,
+        \\"concreteType\\": \\"Person\\",
+        \\"plural\\": true,
+        \\"selections\\": [
+          {
+            \\"kind\\": \\"FragmentSpread\\",
+            \\"name\\": \\"Home_people\\",
+            \\"args\\": null
+          }
+        ]
+      }
+    ]
+  },
+  \\"operation\\": {
+    \\"kind\\": \\"Operation\\",
+    \\"name\\": \\"AppQuery\\",
+    \\"argumentDefinitions\\": [],
+    \\"selections\\": [
+      {
+        \\"kind\\": \\"LinkedField\\",
+        \\"alias\\": null,
+        \\"name\\": \\"people\\",
+        \\"storageKey\\": null,
+        \\"args\\": null,
+        \\"concreteType\\": \\"Person\\",
+        \\"plural\\": true,
+        \\"selections\\": [
+          {
+            \\"kind\\": \\"ScalarField\\",
+            \\"alias\\": null,
+            \\"name\\": \\"id\\",
+            \\"args\\": null,
+            \\"storageKey\\": null
+          },
+          {
+            \\"kind\\": \\"ScalarField\\",
+            \\"alias\\": null,
+            \\"name\\": \\"fullName\\",
+            \\"args\\": null,
+            \\"storageKey\\": null
+          }
+        ]
+      }
+    ]
+  }
+};
+// prettier-ignore
+(node/*: any*/).hash = '09882a000717ccc4afa2102269b7f17f';
+module.exports = node;
+"
+`;
+
+exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example with --artifactDirectory option 5`] = `
+"/**
+ * @flow
+ * @relayHash fe17af87aaaebfec1ae79ac13f999917
+ */
+
+/* eslint-disable */
+
+'use strict';
+
+/*::
+import type { ConcreteRequest } from 'relay-runtime';
+export type AboutQueryVariables = {|
+  id: string
+|};
+export type AboutQueryResponse = {|
+  +personById: ?{|
+    +id: string,
+    +firstName: string,
+    +fullName: string,
+  |}
+|};
+export type AboutQuery = {|
+  variables: AboutQueryVariables,
+  response: AboutQueryResponse,
+|};
+*/
+
+
+/*
+query AboutQuery(
+  $id: ID!
+) {
+  personById(id: $id) {
+    id
+    firstName
+    fullName
+  }
+}
+*/
+
+const node/*: ConcreteRequest*/ = (function(){
+var v0 = [
+  {
+    \\"kind\\": \\"LocalArgument\\",
+    \\"name\\": \\"id\\",
+    \\"type\\": \\"ID!\\",
+    \\"defaultValue\\": null
+  }
+],
+v1 = [
+  {
+    \\"kind\\": \\"LinkedField\\",
+    \\"alias\\": null,
+    \\"name\\": \\"personById\\",
+    \\"storageKey\\": null,
+    \\"args\\": [
+      {
+        \\"kind\\": \\"Variable\\",
+        \\"name\\": \\"id\\",
+        \\"variableName\\": \\"id\\",
+        \\"type\\": \\"ID!\\"
+      }
+    ],
+    \\"concreteType\\": \\"Person\\",
+    \\"plural\\": false,
+    \\"selections\\": [
+      {
+        \\"kind\\": \\"ScalarField\\",
+        \\"alias\\": null,
+        \\"name\\": \\"id\\",
+        \\"args\\": null,
+        \\"storageKey\\": null
+      },
+      {
+        \\"kind\\": \\"ScalarField\\",
+        \\"alias\\": null,
+        \\"name\\": \\"firstName\\",
+        \\"args\\": null,
+        \\"storageKey\\": null
+      },
+      {
+        \\"kind\\": \\"ScalarField\\",
+        \\"alias\\": null,
+        \\"name\\": \\"fullName\\",
+        \\"args\\": null,
+        \\"storageKey\\": null
+      }
+    ]
+  }
+];
+return {
+  \\"kind\\": \\"Request\\",
+  \\"operationKind\\": \\"query\\",
+  \\"name\\": \\"AboutQuery\\",
+  \\"id\\": null,
+  \\"text\\": \\"query AboutQuery(\\\\n  $id: ID!\\\\n) {\\\\n  personById(id: $id) {\\\\n    id\\\\n    firstName\\\\n    fullName\\\\n  }\\\\n}\\\\n\\",
+  \\"metadata\\": {},
+  \\"fragment\\": {
+    \\"kind\\": \\"Fragment\\",
+    \\"name\\": \\"AboutQuery\\",
+    \\"type\\": \\"Query\\",
+    \\"metadata\\": null,
+    \\"argumentDefinitions\\": v0,
+    \\"selections\\": v1
+  },
+  \\"operation\\": {
+    \\"kind\\": \\"Operation\\",
+    \\"name\\": \\"AboutQuery\\",
+    \\"argumentDefinitions\\": v0,
+    \\"selections\\": v1
+  }
+};
+})();
+// prettier-ignore
+(node/*: any*/).hash = '244cfa95d89768b907f6815ff6a3007d';
+module.exports = node;
+"
+`;

@@ -16,7 +16,8 @@ const {
 export default (
   baseDir: string,
   languagePlugin: any,
-  noFutureProofEnums: boolean
+  noFutureProofEnums: boolean,
+  outputDir: ?string
 ) => ({
   onlyValidate,
   schema,
@@ -42,7 +43,8 @@ export default (
       useHaste: false,
       noFutureProofEnums,
       extension: languagePlugin.outputExtension,
-      typeGenerator: languagePlugin.typeGenerator
+      typeGenerator: languagePlugin.typeGenerator,
+      outputDir
     },
     onlyValidate,
     schema,
