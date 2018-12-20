@@ -13,7 +13,8 @@ jest.setTimeout(30000)
 const DEFAULT_NODE_ENV = process.env.NODE_ENV
 
 describe('RelayCompilerWebpackPlugin', () => {
-  const srcDir = path.resolve(__dirname, 'fixtures', 'normalCase', 'src')
+  const normalCaseDir = path.resolve(__dirname, 'fixtures', 'normalCase')
+  const srcDir = path.resolve(normalCaseDir, 'src')
 
   beforeEach(done => {
     rimraf(srcDir + '/**/__generated__/**', done)
@@ -21,10 +22,9 @@ describe('RelayCompilerWebpackPlugin', () => {
   })
 
   it('generates graphql files correctly for a normal example', done => {
-    const normalCaseDir = path.resolve(__dirname, 'fixtures', 'normalCase')
     const relayCompilerWebpackPlugin = new RelayCompilerWebpackPlugin({
       schema: path.resolve(normalCaseDir, 'schema.json'),
-      src: path.resolve(normalCaseDir, 'src')
+      src: srcDir
     })
 
     const webpackConfig = normaliseConfigForWebpackVersion(
@@ -80,7 +80,6 @@ describe('RelayCompilerWebpackPlugin', () => {
   it('generates graphql files correctly for a normal example with --artifactDirectory option', done => {
     process.env.NODE_ENV = 'artifactDirectoryTest'
 
-    const normalCaseDir = path.resolve(__dirname, 'fixtures', 'normalCase')
     const relayCompilerWebpackPlugin = new RelayCompilerWebpackPlugin({
       schema: path.resolve(normalCaseDir, 'schema.json'),
       src: path.resolve(normalCaseDir, 'src'),

@@ -18,7 +18,7 @@ const commonTransforms = _RelayIRTransforms.default.commonTransforms,
       queryTransforms = _RelayIRTransforms.default.queryTransforms,
       schemaExtensions = _RelayIRTransforms.default.schemaExtensions;
 
-var _default = (baseDir, languagePlugin, noFutureProofEnums) => ({
+var _default = (baseDir, languagePlugin, noFutureProofEnums, outputDir) => ({
   onlyValidate,
   schema,
   documents,
@@ -42,7 +42,8 @@ var _default = (baseDir, languagePlugin, noFutureProofEnums) => ({
     useHaste: false,
     noFutureProofEnums,
     extension: languagePlugin.outputExtension,
-    typeGenerator: languagePlugin.typeGenerator
+    typeGenerator: languagePlugin.typeGenerator,
+    outputDir
   },
   onlyValidate,
   schema,
