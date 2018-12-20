@@ -89,6 +89,7 @@ class RelayCompilerWebpackPlugin {
       extensions
     });
     this.writerConfigs = this.createWriterConfigs({
+      artifactDirectory: options.artifactDirectory,
       baseDir: options.src,
       sourceParserName,
       languagePlugin: language
@@ -134,11 +135,12 @@ class RelayCompilerWebpackPlugin {
   createWriterConfigs({
     baseDir,
     sourceParserName,
-    languagePlugin
+    languagePlugin,
+    artifactDirectory
   }) {
     return {
       [languagePlugin.outputExtension]: {
-        getWriter: (0, _getWriter.default)(languagePlugin, baseDir),
+        getWriter: (0, _getWriter.default)(languagePlugin, baseDir, artifactDirectory),
         isGeneratedFile: filePath => filePath.endsWith('.graphql.' + languagePlugin.outputExtension) && filePath.includes('__generated__'),
         parser: sourceParserName,
         baseParsers: ['graphql']

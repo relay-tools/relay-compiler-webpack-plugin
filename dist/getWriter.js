@@ -18,7 +18,7 @@ const commonTransforms = _relayCompiler.IRTransforms.commonTransforms,
       queryTransforms = _relayCompiler.IRTransforms.queryTransforms,
       schemaExtensions = _relayCompiler.IRTransforms.schemaExtensions;
 
-function getWriter(languagePlugin, baseDir) {
+function getWriter(languagePlugin, baseDir, outputDir) {
   return (config, ...args) => {
     const cfg = typeof config === 'object' ? config : {
       onlyValidate: config,
@@ -39,10 +39,11 @@ function getWriter(languagePlugin, baseDir) {
           queryTransforms
         },
         customScalars: {},
+        extension: languagePlugin.outputExtension,
         formatModule: languagePlugin.formatModule,
         inputFieldWhiteListForFlow: [],
+        outputDir,
         schemaExtensions,
-        extension: languagePlugin.outputExtension,
         typeGenerator: languagePlugin.typeGenerator,
         useHaste: false
       }
