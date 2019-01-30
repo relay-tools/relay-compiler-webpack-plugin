@@ -81,7 +81,7 @@
         "@babel/preset-env",
         {
           "targets": {
-            "node": "6.1"
+            "node": "8.0"
           }
         }
       ],

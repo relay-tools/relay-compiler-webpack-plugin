@@ -20,10 +20,6 @@ var _getFilepathsFromGlob = _interopRequireDefault(require("./getFilepathsFromGl
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -152,30 +148,26 @@ class RelayCompilerWebpackPlugin {
     };
   }
 
-  compile(issuer, request) {
-    var _this = this;
+  async compile(issuer, request) {
+    const errors = [];
 
-    return _asyncToGenerator(function* () {
-      const errors = [];
+    try {
+      // Can this be set up in constructor and use same instance every time?
+      const runner = new _relayCompiler.Runner({
+        parserConfigs: this.parserConfigs,
+        writerConfigs: this.writerConfigs,
+        reporter: new RaiseErrorsReporter(),
+        onlyValidate: false,
+        skipPersist: true
+      });
+      return runner.compile(this.languagePlugin.outputExtension);
+    } catch (error) {
+      errors.push(error);
+    }
 
-      try {
-        // Can this be set up in constructor and use same instance every time?
-        const runner = new _relayCompiler.Runner({
-          parserConfigs: _this.parserConfigs,
-          writerConfigs: _this.writerConfigs,
-          reporter: new RaiseErrorsReporter(),
-          onlyValidate: false,
-          skipPersist: true
-        });
-        return runner.compile(_this.languagePlugin.outputExtension);
-      } catch (error) {
-        errors.push(error);
-      }
-
-      if (errors.length) {
-        throw errors[0];
-      }
-    })();
+    if (errors.length) {
+      throw errors[0];
+    }
   }
 
   cachedCompiler() {

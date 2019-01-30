@@ -11,12 +11,14 @@ var _RelayIRTransforms = _interopRequireDefault(require("relay-compiler/lib/Rela
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const commonTransforms = _RelayIRTransforms.default.commonTransforms,
-      codegenTransforms = _RelayIRTransforms.default.codegenTransforms,
-      fragmentTransforms = _RelayIRTransforms.default.fragmentTransforms,
-      printTransforms = _RelayIRTransforms.default.printTransforms,
-      queryTransforms = _RelayIRTransforms.default.queryTransforms,
-      schemaExtensions = _RelayIRTransforms.default.schemaExtensions;
+const {
+  commonTransforms,
+  codegenTransforms,
+  fragmentTransforms,
+  printTransforms,
+  queryTransforms,
+  schemaExtensions
+} = _RelayIRTransforms.default;
 
 var _default = (baseDir, languagePlugin, noFutureProofEnums, outputDir) => ({
   onlyValidate,
