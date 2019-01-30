@@ -7,11 +7,9 @@ cache:
 
 node_js:
   - "6"
-# Not supported by yarn, or some other deeper deps (e.g. webpack -> terser-webpack-plugin)
-#  - "7"
   - "8"
-  - "9"
   - "10"
+  - "11"
 
 env:
   - WEBPACK_VERSION=3
