@@ -52,6 +52,8 @@ class RelayCompilerWebpackPlugin {
 
     _defineProperty(this, "writerConfigs", void 0);
 
+    _defineProperty(this, "languagePlugin", void 0);
+
     if (!options) {
       throw new Error('You must provide options to RelayCompilerWebpackPlugin.');
     }
@@ -92,8 +94,10 @@ class RelayCompilerWebpackPlugin {
       artifactDirectory: options.artifactDirectory,
       baseDir: options.src,
       sourceParserName,
-      languagePlugin: language
+      languagePlugin: language,
+      artifactDirectory: options.artifactDirectory
     });
+    this.languagePlugin = language;
   }
 
   createParserConfigs({
@@ -140,7 +144,12 @@ class RelayCompilerWebpackPlugin {
   }) {
     return {
       [languagePlugin.outputExtension]: {
+<<<<<<< HEAD
         getWriter: (0, _getWriter.default)(languagePlugin, baseDir, artifactDirectory),
+=======
+        writeFiles: (0, _getWriter.default)(baseDir, languagePlugin, false, // noFutureProofEnums
+        artifactDirectory),
+>>>>>>> 2.0.0
         isGeneratedFile: filePath => filePath.endsWith('.graphql.' + languagePlugin.outputExtension) && filePath.includes('__generated__'),
         parser: sourceParserName,
         baseParsers: ['graphql']
@@ -163,7 +172,7 @@ class RelayCompilerWebpackPlugin {
           onlyValidate: false,
           skipPersist: true
         });
-        return runner.compile('js');
+        return runner.compile(_this.languagePlugin.outputExtension);
       } catch (error) {
         errors.push(error);
       }

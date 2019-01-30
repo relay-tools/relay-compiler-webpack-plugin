@@ -21,4 +21,7 @@ install:
   - yarn
   - yarn remove webpack
   - yarn add webpack@$WEBPACK_VERSION
+
+script:
   - yarn build
+

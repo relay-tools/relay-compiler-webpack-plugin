@@ -2,6 +2,7 @@
 
 import { Runner } from 'relay-compiler'
 import RelayLanguagePluginJavaScript from 'relay-compiler/lib/RelayLanguagePluginJavaScript'
+import type { PluginInterface } from 'relay-compiler/lib/RelayLanguagePluginInterface'
 import RelaySourceModuleParser from 'relay-compiler/lib/RelaySourceModuleParser'
 import { DotGraphQLParser } from 'graphql-compiler'
 
@@ -36,8 +37,8 @@ class RaiseErrorsReporter {
 
 class RelayCompilerWebpackPlugin {
   parserConfigs: {}
-
   writerConfigs: {}
+  languagePlugin: PluginInterface
 
   constructor (options: {
     schema: string | GraphQLSchema,
@@ -46,7 +47,7 @@ class RelayCompilerWebpackPlugin {
     extensions: Array<string>,
     include: Array<string>,
     exclude: Array<string>,
-    languagePlugin?: Function,
+    languagePlugin?: () => PluginInterface,
     artifactDirectory?: string
   }) {
     if (!options) {
@@ -106,6 +107,8 @@ class RelayCompilerWebpackPlugin {
       sourceParserName,
       languagePlugin: language
     })
+
+    this.languagePlugin = language
   }
 
   createParserConfigs ({
@@ -121,7 +124,7 @@ class RelayCompilerWebpackPlugin {
     baseDir: string,
     getParser?: Function,
     sourceParserName: string,
-    languagePlugin: any,
+    languagePlugin: PluginInterface,
     schema: string | GraphQLSchema,
     include: Array<string>,
     exclude: Array<string>,
@@ -164,12 +167,17 @@ class RelayCompilerWebpackPlugin {
   }: {
     baseDir: string,
     sourceParserName: string,
-    languagePlugin: any,
+    languagePlugin: PluginInterface,
     artifactDirectory: ?string
   }) {
     return {
       [languagePlugin.outputExtension]: {
-        getWriter: getWriter(languagePlugin, baseDir, artifactDirectory),
+        writeFiles: getWriter(
+          baseDir,
+          languagePlugin,
+          false, // noFutureProofEnums
+          artifactDirectory
+        ),
         isGeneratedFile: (filePath: string) =>
           filePath.endsWith('.graphql.' + languagePlugin.outputExtension) &&
           filePath.includes('__generated__'),
@@ -190,7 +198,7 @@ class RelayCompilerWebpackPlugin {
         onlyValidate: false,
         skipPersist: true
       })
-      return runner.compile('js')
+      return runner.compile(this.languagePlugin.outputExtension)
     } catch (error) {
       errors.push(error)
     }

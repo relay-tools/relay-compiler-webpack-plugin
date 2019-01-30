@@ -3,7 +3,7 @@
 exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example 1`] = `
 "/**
  * @flow
- * @relayHash 598b70b3a2d4c9e9025a9ec1889162fc
+ * @relayHash 932fab1a1ccc844e4de5325ebbbb90ed
  */
 
 /* eslint-disable */
@@ -91,24 +91,19 @@ v3 = {
 };
 return {
   \\"kind\\": \\"Request\\",
-  \\"operationKind\\": \\"mutation\\",
-  \\"name\\": \\"updateFirstNameMutation\\",
-  \\"id\\": null,
-  \\"text\\": \\"mutation updateFirstNameMutation(\\\\n  $id: ID!\\\\n  $firstName: String!\\\\n) {\\\\n  updateFirstName(id: $id, firstName: $firstName) {\\\\n    person {\\\\n      firstName\\\\n      fullName\\\\n      id\\\\n    }\\\\n  }\\\\n}\\\\n\\",
-  \\"metadata\\": {},
   \\"fragment\\": {
     \\"kind\\": \\"Fragment\\",
     \\"name\\": \\"updateFirstNameMutation\\",
     \\"type\\": \\"Mutation\\",
     \\"metadata\\": null,
-    \\"argumentDefinitions\\": v0,
+    \\"argumentDefinitions\\": (v0/*: any*/),
     \\"selections\\": [
       {
         \\"kind\\": \\"LinkedField\\",
         \\"alias\\": null,
         \\"name\\": \\"updateFirstName\\",
         \\"storageKey\\": null,
-        \\"args\\": v1,
+        \\"args\\": (v1/*: any*/),
         \\"concreteType\\": \\"UpdateFirstNameOutput\\",
         \\"plural\\": false,
         \\"selections\\": [
@@ -121,8 +116,8 @@ return {
             \\"concreteType\\": \\"Person\\",
             \\"plural\\": false,
             \\"selections\\": [
-              v2,
-              v3
+              (v2/*: any*/),
+              (v3/*: any*/)
             ]
           }
         ]
@@ -132,14 +127,14 @@ return {
   \\"operation\\": {
     \\"kind\\": \\"Operation\\",
     \\"name\\": \\"updateFirstNameMutation\\",
-    \\"argumentDefinitions\\": v0,
+    \\"argumentDefinitions\\": (v0/*: any*/),
     \\"selections\\": [
       {
         \\"kind\\": \\"LinkedField\\",
         \\"alias\\": null,
         \\"name\\": \\"updateFirstName\\",
         \\"storageKey\\": null,
-        \\"args\\": v1,
+        \\"args\\": (v1/*: any*/),
         \\"concreteType\\": \\"UpdateFirstNameOutput\\",
         \\"plural\\": false,
         \\"selections\\": [
@@ -152,8 +147,8 @@ return {
             \\"concreteType\\": \\"Person\\",
             \\"plural\\": false,
             \\"selections\\": [
-              v2,
-              v3,
+              (v2/*: any*/),
+              (v3/*: any*/),
               {
                 \\"kind\\": \\"ScalarField\\",
                 \\"alias\\": null,
@@ -166,6 +161,13 @@ return {
         ]
       }
     ]
+  },
+  \\"params\\": {
+    \\"operationKind\\": \\"mutation\\",
+    \\"name\\": \\"updateFirstNameMutation\\",
+    \\"id\\": null,
+    \\"text\\": \\"mutation updateFirstNameMutation(\\\\n  $id: ID!\\\\n  $firstName: String!\\\\n) {\\\\n  updateFirstName(id: $id, firstName: $firstName) {\\\\n    person {\\\\n      firstName\\\\n      fullName\\\\n      id\\\\n    }\\\\n  }\\\\n}\\\\n\\",
+    \\"metadata\\": {}
   }
 };
 })();
@@ -185,7 +187,7 @@ exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a norm
 'use strict';
 
 /*::
-import type { ConcreteFragment } from 'relay-runtime';
+import type { ReaderFragment } from 'relay-runtime';
 import type { FragmentReference } from \\"relay-runtime\\";
 declare export opaque type HomeItem_person$ref: FragmentReference;
 export type HomeItem_person = {|
@@ -196,7 +198,7 @@ export type HomeItem_person = {|
 */
 
 
-const node/*: ConcreteFragment*/ = {
+const node/*: ReaderFragment*/ = {
   \\"kind\\": \\"Fragment\\",
   \\"name\\": \\"HomeItem_person\\",
   \\"type\\": \\"Person\\",
@@ -235,7 +237,7 @@ exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a norm
 'use strict';
 
 /*::
-import type { ConcreteFragment } from 'relay-runtime';
+import type { ReaderFragment } from 'relay-runtime';
 type HomeItem_person$ref = any;
 import type { FragmentReference } from \\"relay-runtime\\";
 declare export opaque type Home_people$ref: FragmentReference;
@@ -247,7 +249,7 @@ export type Home_people = $ReadOnlyArray<{|
 */
 
 
-const node/*: ConcreteFragment*/ = {
+const node/*: ReaderFragment*/ = {
   \\"kind\\": \\"Fragment\\",
   \\"name\\": \\"Home_people\\",
   \\"type\\": \\"Person\\",
@@ -279,7 +281,7 @@ module.exports = node;
 exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example 4`] = `
 "/**
  * @flow
- * @relayHash 68374dc026e6666086e2229c400420b6
+ * @relayHash 1f3a698b50e70fa403d4b3d64a141bb3
  */
 
 /* eslint-disable */
@@ -323,11 +325,6 @@ fragment HomeItem_person on Person {
 
 const node/*: ConcreteRequest*/ = {
   \\"kind\\": \\"Request\\",
-  \\"operationKind\\": \\"query\\",
-  \\"name\\": \\"AppQuery\\",
-  \\"id\\": null,
-  \\"text\\": \\"query AppQuery {\\\\n  people {\\\\n    ...Home_people\\\\n    id\\\\n  }\\\\n}\\\\n\\\\nfragment Home_people on Person {\\\\n  id\\\\n  ...HomeItem_person\\\\n}\\\\n\\\\nfragment HomeItem_person on Person {\\\\n  id\\\\n  fullName\\\\n}\\\\n\\",
-  \\"metadata\\": {},
   \\"fragment\\": {
     \\"kind\\": \\"Fragment\\",
     \\"name\\": \\"AppQuery\\",
@@ -384,6 +381,13 @@ const node/*: ConcreteRequest*/ = {
         ]
       }
     ]
+  },
+  \\"params\\": {
+    \\"operationKind\\": \\"query\\",
+    \\"name\\": \\"AppQuery\\",
+    \\"id\\": null,
+    \\"text\\": \\"query AppQuery {\\\\n  people {\\\\n    ...Home_people\\\\n    id\\\\n  }\\\\n}\\\\n\\\\nfragment Home_people on Person {\\\\n  id\\\\n  ...HomeItem_person\\\\n}\\\\n\\\\nfragment HomeItem_person on Person {\\\\n  id\\\\n  fullName\\\\n}\\\\n\\",
+    \\"metadata\\": {}
   }
 };
 // prettier-ignore
@@ -395,7 +399,7 @@ module.exports = node;
 exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example 5`] = `
 "/**
  * @flow
- * @relayHash fe17af87aaaebfec1ae79ac13f999917
+ * @relayHash 8795dc0ccf5c7b7d5e7fca4f17787ea7
  */
 
 /* eslint-disable */
@@ -485,24 +489,26 @@ v1 = [
 ];
 return {
   \\"kind\\": \\"Request\\",
-  \\"operationKind\\": \\"query\\",
-  \\"name\\": \\"AboutQuery\\",
-  \\"id\\": null,
-  \\"text\\": \\"query AboutQuery(\\\\n  $id: ID!\\\\n) {\\\\n  personById(id: $id) {\\\\n    id\\\\n    firstName\\\\n    fullName\\\\n  }\\\\n}\\\\n\\",
-  \\"metadata\\": {},
   \\"fragment\\": {
     \\"kind\\": \\"Fragment\\",
     \\"name\\": \\"AboutQuery\\",
     \\"type\\": \\"Query\\",
     \\"metadata\\": null,
-    \\"argumentDefinitions\\": v0,
-    \\"selections\\": v1
+    \\"argumentDefinitions\\": (v0/*: any*/),
+    \\"selections\\": (v1/*: any*/)
   },
   \\"operation\\": {
     \\"kind\\": \\"Operation\\",
     \\"name\\": \\"AboutQuery\\",
-    \\"argumentDefinitions\\": v0,
-    \\"selections\\": v1
+    \\"argumentDefinitions\\": (v0/*: any*/),
+    \\"selections\\": (v1/*: any*/)
+  },
+  \\"params\\": {
+    \\"operationKind\\": \\"query\\",
+    \\"name\\": \\"AboutQuery\\",
+    \\"id\\": null,
+    \\"text\\": \\"query AboutQuery(\\\\n  $id: ID!\\\\n) {\\\\n  personById(id: $id) {\\\\n    id\\\\n    firstName\\\\n    fullName\\\\n  }\\\\n}\\\\n\\",
+    \\"metadata\\": {}
   }
 };
 })();
@@ -515,7 +521,7 @@ module.exports = node;
 exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example with --artifactDirectory option 1`] = `
 "/**
  * @flow
- * @relayHash 598b70b3a2d4c9e9025a9ec1889162fc
+ * @relayHash 932fab1a1ccc844e4de5325ebbbb90ed
  */
 
 /* eslint-disable */
@@ -603,24 +609,19 @@ v3 = {
 };
 return {
   \\"kind\\": \\"Request\\",
-  \\"operationKind\\": \\"mutation\\",
-  \\"name\\": \\"updateFirstNameMutation\\",
-  \\"id\\": null,
-  \\"text\\": \\"mutation updateFirstNameMutation(\\\\n  $id: ID!\\\\n  $firstName: String!\\\\n) {\\\\n  updateFirstName(id: $id, firstName: $firstName) {\\\\n    person {\\\\n      firstName\\\\n      fullName\\\\n      id\\\\n    }\\\\n  }\\\\n}\\\\n\\",
-  \\"metadata\\": {},
   \\"fragment\\": {
     \\"kind\\": \\"Fragment\\",
     \\"name\\": \\"updateFirstNameMutation\\",
     \\"type\\": \\"Mutation\\",
     \\"metadata\\": null,
-    \\"argumentDefinitions\\": v0,
+    \\"argumentDefinitions\\": (v0/*: any*/),
     \\"selections\\": [
       {
         \\"kind\\": \\"LinkedField\\",
         \\"alias\\": null,
         \\"name\\": \\"updateFirstName\\",
         \\"storageKey\\": null,
-        \\"args\\": v1,
+        \\"args\\": (v1/*: any*/),
         \\"concreteType\\": \\"UpdateFirstNameOutput\\",
         \\"plural\\": false,
         \\"selections\\": [
@@ -633,8 +634,8 @@ return {
             \\"concreteType\\": \\"Person\\",
             \\"plural\\": false,
             \\"selections\\": [
-              v2,
-              v3
+              (v2/*: any*/),
+              (v3/*: any*/)
             ]
           }
         ]
@@ -644,14 +645,14 @@ return {
   \\"operation\\": {
     \\"kind\\": \\"Operation\\",
     \\"name\\": \\"updateFirstNameMutation\\",
-    \\"argumentDefinitions\\": v0,
+    \\"argumentDefinitions\\": (v0/*: any*/),
     \\"selections\\": [
       {
         \\"kind\\": \\"LinkedField\\",
         \\"alias\\": null,
         \\"name\\": \\"updateFirstName\\",
         \\"storageKey\\": null,
-        \\"args\\": v1,
+        \\"args\\": (v1/*: any*/),
         \\"concreteType\\": \\"UpdateFirstNameOutput\\",
         \\"plural\\": false,
         \\"selections\\": [
@@ -664,8 +665,8 @@ return {
             \\"concreteType\\": \\"Person\\",
             \\"plural\\": false,
             \\"selections\\": [
-              v2,
-              v3,
+              (v2/*: any*/),
+              (v3/*: any*/),
               {
                 \\"kind\\": \\"ScalarField\\",
                 \\"alias\\": null,
@@ -678,6 +679,13 @@ return {
         ]
       }
     ]
+  },
+  \\"params\\": {
+    \\"operationKind\\": \\"mutation\\",
+    \\"name\\": \\"updateFirstNameMutation\\",
+    \\"id\\": null,
+    \\"text\\": \\"mutation updateFirstNameMutation(\\\\n  $id: ID!\\\\n  $firstName: String!\\\\n) {\\\\n  updateFirstName(id: $id, firstName: $firstName) {\\\\n    person {\\\\n      firstName\\\\n      fullName\\\\n      id\\\\n    }\\\\n  }\\\\n}\\\\n\\",
+    \\"metadata\\": {}
   }
 };
 })();
@@ -697,7 +705,7 @@ exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a norm
 'use strict';
 
 /*::
-import type { ConcreteFragment } from 'relay-runtime';
+import type { ReaderFragment } from 'relay-runtime';
 import type { FragmentReference } from \\"relay-runtime\\";
 declare export opaque type HomeItem_person$ref: FragmentReference;
 export type HomeItem_person = {|
@@ -708,7 +716,7 @@ export type HomeItem_person = {|
 */
 
 
-const node/*: ConcreteFragment*/ = {
+const node/*: ReaderFragment*/ = {
   \\"kind\\": \\"Fragment\\",
   \\"name\\": \\"HomeItem_person\\",
   \\"type\\": \\"Person\\",
@@ -747,7 +755,7 @@ exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a norm
 'use strict';
 
 /*::
-import type { ConcreteFragment } from 'relay-runtime';
+import type { ReaderFragment } from 'relay-runtime';
 import type { HomeItem_person$ref } from \\"./HomeItem_person.graphql\\";
 import type { FragmentReference } from \\"relay-runtime\\";
 declare export opaque type Home_people$ref: FragmentReference;
@@ -759,7 +767,7 @@ export type Home_people = $ReadOnlyArray<{|
 */
 
 
-const node/*: ConcreteFragment*/ = {
+const node/*: ReaderFragment*/ = {
   \\"kind\\": \\"Fragment\\",
   \\"name\\": \\"Home_people\\",
   \\"type\\": \\"Person\\",
@@ -791,7 +799,7 @@ module.exports = node;
 exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example with --artifactDirectory option 4`] = `
 "/**
  * @flow
- * @relayHash 9af84366ab181210887699f71fb392c1
+ * @relayHash 254d1a2ec000a09fb84ac4b3336beb67
  */
 
 /* eslint-disable */
@@ -835,11 +843,6 @@ fragment HomeItem_person on Person {
 
 const node/*: ConcreteRequest*/ = {
   \\"kind\\": \\"Request\\",
-  \\"operationKind\\": \\"query\\",
-  \\"name\\": \\"AppQuery\\",
-  \\"id\\": null,
-  \\"text\\": \\"query AppQuery {\\\\n  people {\\\\n    ...Home_people\\\\n    id\\\\n  }\\\\n}\\\\n\\\\nfragment Home_people on Person {\\\\n  id\\\\n  ...HomeItem_person\\\\n}\\\\n\\\\nfragment HomeItem_person on Person {\\\\n  id\\\\n  fullName\\\\n}\\\\n\\",
-  \\"metadata\\": {},
   \\"fragment\\": {
     \\"kind\\": \\"Fragment\\",
     \\"name\\": \\"AppQuery\\",
@@ -896,6 +899,13 @@ const node/*: ConcreteRequest*/ = {
         ]
       }
     ]
+  },
+  \\"params\\": {
+    \\"operationKind\\": \\"query\\",
+    \\"name\\": \\"AppQuery\\",
+    \\"id\\": null,
+    \\"text\\": \\"query AppQuery {\\\\n  people {\\\\n    ...Home_people\\\\n    id\\\\n  }\\\\n}\\\\n\\\\nfragment Home_people on Person {\\\\n  id\\\\n  ...HomeItem_person\\\\n}\\\\n\\\\nfragment HomeItem_person on Person {\\\\n  id\\\\n  fullName\\\\n}\\\\n\\",
+    \\"metadata\\": {}
   }
 };
 // prettier-ignore
@@ -907,7 +917,7 @@ module.exports = node;
 exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example with --artifactDirectory option 5`] = `
 "/**
  * @flow
- * @relayHash fe17af87aaaebfec1ae79ac13f999917
+ * @relayHash 8795dc0ccf5c7b7d5e7fca4f17787ea7
  */
 
 /* eslint-disable */
@@ -997,24 +1007,26 @@ v1 = [
 ];
 return {
   \\"kind\\": \\"Request\\",
-  \\"operationKind\\": \\"query\\",
-  \\"name\\": \\"AboutQuery\\",
-  \\"id\\": null,
-  \\"text\\": \\"query AboutQuery(\\\\n  $id: ID!\\\\n) {\\\\n  personById(id: $id) {\\\\n    id\\\\n    firstName\\\\n    fullName\\\\n  }\\\\n}\\\\n\\",
-  \\"metadata\\": {},
   \\"fragment\\": {
     \\"kind\\": \\"Fragment\\",
     \\"name\\": \\"AboutQuery\\",
     \\"type\\": \\"Query\\",
     \\"metadata\\": null,
-    \\"argumentDefinitions\\": v0,
-    \\"selections\\": v1
+    \\"argumentDefinitions\\": (v0/*: any*/),
+    \\"selections\\": (v1/*: any*/)
   },
   \\"operation\\": {
     \\"kind\\": \\"Operation\\",
     \\"name\\": \\"AboutQuery\\",
-    \\"argumentDefinitions\\": v0,
-    \\"selections\\": v1
+    \\"argumentDefinitions\\": (v0/*: any*/),
+    \\"selections\\": (v1/*: any*/)
+  },
+  \\"params\\": {
+    \\"operationKind\\": \\"query\\",
+    \\"name\\": \\"AboutQuery\\",
+    \\"id\\": null,
+    \\"text\\": \\"query AboutQuery(\\\\n  $id: ID!\\\\n) {\\\\n  personById(id: $id) {\\\\n    id\\\\n    firstName\\\\n    fullName\\\\n  }\\\\n}\\\\n\\",
+    \\"metadata\\": {}
   }
 };
 })();

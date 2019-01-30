@@ -13,22 +13,22 @@ jest.setTimeout(30000)
 const DEFAULT_NODE_ENV = process.env.NODE_ENV
 
 describe('RelayCompilerWebpackPlugin', () => {
-  const srcDir = path.resolve(__dirname, 'fixtures', 'normalCase', 'src')
+  const normalCaseDir = path.resolve(__dirname, 'fixtures', 'normalCase')
+  const srcDir = path.resolve(normalCaseDir, 'src')
 
   beforeEach(done => {
     rimraf(srcDir + '/**/__generated__/**', done)
-     process.env.NODE_ENV = DEFAULT_NODE_ENV
+    process.env.NODE_ENV = DEFAULT_NODE_ENV
   })
 
   it('generates graphql files correctly for a normal example', done => {
-    const normalCaseDir = path.resolve(__dirname, 'fixtures', 'normalCase');
     const relayCompilerWebpackPlugin = new RelayCompilerWebpackPlugin({
       schema: path.resolve(normalCaseDir, 'schema.json'),
-      src: path.resolve(normalCaseDir, 'src'),
+      src: srcDir
     })
 
     const webpackConfig = normaliseConfigForWebpackVersion(
-      createWebpackConfig({relayCompilerWebpackPlugin})
+      createWebpackConfig({ relayCompilerWebpackPlugin })
     )
 
     webpack(webpackConfig, (err, stats) => {
@@ -78,18 +78,17 @@ describe('RelayCompilerWebpackPlugin', () => {
   })
 
   it('generates graphql files correctly for a normal example with --artifactDirectory option', done => {
-    process.env.NODE_ENV = "artifactDirectoryTest";
+    process.env.NODE_ENV = 'artifactDirectoryTest'
 
-    const normalCaseDir = path.resolve(__dirname, 'fixtures', 'normalCase');
     const relayCompilerWebpackPlugin = new RelayCompilerWebpackPlugin({
       schema: path.resolve(normalCaseDir, 'schema.json'),
       src: path.resolve(normalCaseDir, 'src'),
-      artifactDirectory: path.resolve(normalCaseDir, 'src', '__generated__'),
+      artifactDirectory: path.resolve(normalCaseDir, 'src', '__generated__')
     })
 
     const webpackConfig = normaliseConfigForWebpackVersion(
-      createWebpackConfig({relayCompilerWebpackPlugin})
-    );
+      createWebpackConfig({ relayCompilerWebpackPlugin })
+    )
 
     webpack(webpackConfig, (err, stats) => {
       expect(err).toBeFalsy()
@@ -102,26 +101,10 @@ describe('RelayCompilerWebpackPlugin', () => {
           '__generated__',
           'updateFirstNameMutation.graphql.js'
         ),
-        path.resolve(
-          srcDir,
-          '__generated__',
-          'HomeItem_person.graphql.js'
-        ),
-        path.resolve(
-          srcDir,
-          '__generated__',
-          'Home_people.graphql.js'
-        ),
-        path.resolve(
-          srcDir,
-          '__generated__',
-          'AppQuery.graphql.js'
-        ),
-        path.resolve(
-          srcDir,
-          '__generated__',
-          'AboutQuery.graphql.js'
-        )
+        path.resolve(srcDir, '__generated__', 'HomeItem_person.graphql.js'),
+        path.resolve(srcDir, '__generated__', 'Home_people.graphql.js'),
+        path.resolve(srcDir, '__generated__', 'AppQuery.graphql.js'),
+        path.resolve(srcDir, '__generated__', 'AboutQuery.graphql.js')
       ]
       expectedFiles.forEach(generatedFilepath => {
         expect(fs.existsSync(generatedFilepath)).toBe(true)

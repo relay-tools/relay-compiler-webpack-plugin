@@ -41,6 +41,7 @@ module.exports = {
 
   3. :tada:
 
+
 ### Gotchas
 
 If there are multiple versions of GraphQL in your dependency tree it will cause schema validation errors. To get around
