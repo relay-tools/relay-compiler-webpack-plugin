@@ -6,8 +6,6 @@ var _RelayLanguagePluginJavaScript = _interopRequireDefault(require("relay-compi
 
 var _RelaySourceModuleParser = _interopRequireDefault(require("relay-compiler/lib/RelaySourceModuleParser"));
 
-var _graphqlCompiler = require("graphql-compiler");
-
 var _fs = _interopRequireDefault(require("fs"));
 
 var _path = _interopRequireDefault(require("path"));
@@ -122,7 +120,7 @@ class RelayCompilerWebpackPlugin {
       },
       graphql: {
         baseDir,
-        getParser: _graphqlCompiler.DotGraphQLParser.getParser,
+        getParser: _relayCompiler.DotGraphQLParser.getParser,
         getSchema: schemaFn,
         filepaths: (0, _getFilepathsFromGlob.default)(baseDir, _objectSpread({}, fileOptions, {
           extensions: ['graphql']
