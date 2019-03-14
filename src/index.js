@@ -1,10 +1,9 @@
 // @flow
 
-import { Runner } from 'relay-compiler'
+import { Runner, DotGraphQLParser } from 'relay-compiler'
 import RelayLanguagePluginJavaScript from 'relay-compiler/lib/RelayLanguagePluginJavaScript'
 import type { PluginInterface } from 'relay-compiler/lib/RelayLanguagePluginInterface'
 import RelaySourceModuleParser from 'relay-compiler/lib/RelaySourceModuleParser'
-import { DotGraphQLParser } from 'graphql-compiler'
 
 import fs from 'fs'
 import path from 'path'

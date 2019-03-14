@@ -1,6 +1,6 @@
 // @flow
 
-import type { WriteFilesOptions } from 'graphql-compiler'
+import type { WriteFilesOptions } from 'relay-compiler'
 import RelayFileWriter from 'relay-compiler/lib/RelayFileWriter'
 import RelayIRTransforms from 'relay-compiler/lib/RelayIRTransforms'
 
