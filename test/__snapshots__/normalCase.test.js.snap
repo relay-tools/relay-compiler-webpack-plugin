@@ -3,7 +3,7 @@
 exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example 1`] = `
 "/**
  * @flow
- * @relayHash 932fab1a1ccc844e4de5325ebbbb90ed
+ * @relayHash 5bd09d29f21e8c7772312a5d6d361bdd
  */
 
 /* eslint-disable */
@@ -65,14 +65,12 @@ v1 = [
   {
     \\"kind\\": \\"Variable\\",
     \\"name\\": \\"firstName\\",
-    \\"variableName\\": \\"firstName\\",
-    \\"type\\": \\"String!\\"
+    \\"variableName\\": \\"firstName\\"
   },
   {
     \\"kind\\": \\"Variable\\",
     \\"name\\": \\"id\\",
-    \\"variableName\\": \\"id\\",
-    \\"type\\": \\"ID!\\"
+    \\"variableName\\": \\"id\\"
   }
 ],
 v2 = {
@@ -190,11 +188,17 @@ exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a norm
 import type { ReaderFragment } from 'relay-runtime';
 import type { FragmentReference } from \\"relay-runtime\\";
 declare export opaque type HomeItem_person$ref: FragmentReference;
+declare export opaque type HomeItem_person$fragmentType: HomeItem_person$ref;
 export type HomeItem_person = {|
   +id: string,
   +fullName: string,
   +$refType: HomeItem_person$ref,
 |};
+export type HomeItem_person$data = HomeItem_person;
+export type HomeItem_person$key = {
+  +$data?: HomeItem_person$data,
+  +$fragmentRefs: HomeItem_person$ref,
+};
 */
 
 
@@ -241,11 +245,17 @@ import type { ReaderFragment } from 'relay-runtime';
 type HomeItem_person$ref = any;
 import type { FragmentReference } from \\"relay-runtime\\";
 declare export opaque type Home_people$ref: FragmentReference;
+declare export opaque type Home_people$fragmentType: Home_people$ref;
 export type Home_people = $ReadOnlyArray<{|
   +id: string,
   +$fragmentRefs: HomeItem_person$ref,
   +$refType: Home_people$ref,
 |}>;
+export type Home_people$data = Home_people;
+export type Home_people$key = {
+  +$data?: Home_people$data,
+  +$fragmentRefs: Home_people$ref,
+};
 */
 
 
@@ -399,7 +409,7 @@ module.exports = node;
 exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example 5`] = `
 "/**
  * @flow
- * @relayHash 8795dc0ccf5c7b7d5e7fca4f17787ea7
+ * @relayHash fa2411483bd3de9f45b5ba00eb49a2b7
  */
 
 /* eslint-disable */
@@ -456,8 +466,7 @@ v1 = [
       {
         \\"kind\\": \\"Variable\\",
         \\"name\\": \\"id\\",
-        \\"variableName\\": \\"id\\",
-        \\"type\\": \\"ID!\\"
+        \\"variableName\\": \\"id\\"
       }
     ],
     \\"concreteType\\": \\"Person\\",
@@ -521,7 +530,7 @@ module.exports = node;
 exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example with --artifactDirectory option 1`] = `
 "/**
  * @flow
- * @relayHash 932fab1a1ccc844e4de5325ebbbb90ed
+ * @relayHash 5bd09d29f21e8c7772312a5d6d361bdd
  */
 
 /* eslint-disable */
@@ -583,14 +592,12 @@ v1 = [
   {
     \\"kind\\": \\"Variable\\",
     \\"name\\": \\"firstName\\",
-    \\"variableName\\": \\"firstName\\",
-    \\"type\\": \\"String!\\"
+    \\"variableName\\": \\"firstName\\"
   },
   {
     \\"kind\\": \\"Variable\\",
     \\"name\\": \\"id\\",
-    \\"variableName\\": \\"id\\",
-    \\"type\\": \\"ID!\\"
+    \\"variableName\\": \\"id\\"
   }
 ],
 v2 = {
@@ -708,11 +715,17 @@ exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a norm
 import type { ReaderFragment } from 'relay-runtime';
 import type { FragmentReference } from \\"relay-runtime\\";
 declare export opaque type HomeItem_person$ref: FragmentReference;
+declare export opaque type HomeItem_person$fragmentType: HomeItem_person$ref;
 export type HomeItem_person = {|
   +id: string,
   +fullName: string,
   +$refType: HomeItem_person$ref,
 |};
+export type HomeItem_person$data = HomeItem_person;
+export type HomeItem_person$key = {
+  +$data?: HomeItem_person$data,
+  +$fragmentRefs: HomeItem_person$ref,
+};
 */
 
 
@@ -759,11 +772,17 @@ import type { ReaderFragment } from 'relay-runtime';
 import type { HomeItem_person$ref } from \\"./HomeItem_person.graphql\\";
 import type { FragmentReference } from \\"relay-runtime\\";
 declare export opaque type Home_people$ref: FragmentReference;
+declare export opaque type Home_people$fragmentType: Home_people$ref;
 export type Home_people = $ReadOnlyArray<{|
   +id: string,
   +$fragmentRefs: HomeItem_person$ref,
   +$refType: Home_people$ref,
 |}>;
+export type Home_people$data = Home_people;
+export type Home_people$key = {
+  +$data?: Home_people$data,
+  +$fragmentRefs: Home_people$ref,
+};
 */
 
 
@@ -917,7 +936,7 @@ module.exports = node;
 exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example with --artifactDirectory option 5`] = `
 "/**
  * @flow
- * @relayHash 8795dc0ccf5c7b7d5e7fca4f17787ea7
+ * @relayHash fa2411483bd3de9f45b5ba00eb49a2b7
  */
 
 /* eslint-disable */
@@ -974,8 +993,7 @@ v1 = [
       {
         \\"kind\\": \\"Variable\\",
         \\"name\\": \\"id\\",
-        \\"variableName\\": \\"id\\",
-        \\"type\\": \\"ID!\\"
+        \\"variableName\\": \\"id\\"
       }
     ],
     \\"concreteType\\": \\"Person\\",
