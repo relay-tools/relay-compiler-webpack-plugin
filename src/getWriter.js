@@ -14,10 +14,8 @@ const {
 } = RelayIRTransforms
 
 export default (
-  baseDir: string,
   languagePlugin: any,
-  noFutureProofEnums: boolean,
-  outputDir: ?string
+  config: any
 ) => ({
   onlyValidate,
   schema,
@@ -28,7 +26,7 @@ export default (
 }: WriteFilesOptions) =>
   RelayFileWriter.writeAll({
     config: {
-      baseDir,
+      ...config,
       compilerTransforms: {
         commonTransforms,
         codegenTransforms,
@@ -41,10 +39,8 @@ export default (
       optionalInputFieldsForFlow: [],
       schemaExtensions,
       useHaste: false,
-      noFutureProofEnums,
       extension: languagePlugin.outputExtension,
-      typeGenerator: languagePlugin.typeGenerator,
-      outputDir
+      typeGenerator: languagePlugin.typeGenerator
     },
     onlyValidate,
     schema,

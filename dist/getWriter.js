@@ -11,6 +11,10 @@ var _RelayIRTransforms = _interopRequireDefault(require("relay-compiler/lib/Rela
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 const {
   commonTransforms,
   codegenTransforms,
@@ -20,7 +24,7 @@ const {
   schemaExtensions
 } = _RelayIRTransforms.default;
 
-var _default = (baseDir, languagePlugin, noFutureProofEnums, outputDir) => ({
+var _default = (languagePlugin, config) => ({
   onlyValidate,
   schema,
   documents,
@@ -28,8 +32,7 @@ var _default = (baseDir, languagePlugin, noFutureProofEnums, outputDir) => ({
   sourceControl,
   reporter
 }) => _RelayFileWriter.default.writeAll({
-  config: {
-    baseDir,
+  config: _objectSpread({}, config, {
     compilerTransforms: {
       commonTransforms,
       codegenTransforms,
@@ -42,11 +45,9 @@ var _default = (baseDir, languagePlugin, noFutureProofEnums, outputDir) => ({
     optionalInputFieldsForFlow: [],
     schemaExtensions,
     useHaste: false,
-    noFutureProofEnums,
     extension: languagePlugin.outputExtension,
-    typeGenerator: languagePlugin.typeGenerator,
-    outputDir
-  },
+    typeGenerator: languagePlugin.typeGenerator
+  }),
   onlyValidate,
   schema,
   baseDocuments,
