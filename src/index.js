@@ -175,10 +175,7 @@ class RelayCompilerWebpackPlugin {
   }) {
     return {
       [languagePlugin.outputExtension]: {
-        writeFiles: getWriter(
-          languagePlugin,
-          config
-        ),
+        writeFiles: getWriter(languagePlugin, config),
         isGeneratedFile: (filePath: string) =>
           filePath.endsWith('.graphql.' + languagePlugin.outputExtension) &&
           filePath.includes('__generated__'),

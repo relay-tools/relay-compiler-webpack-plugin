@@ -6,7 +6,9 @@ const Home = ({ people }) => (
   <div>
     <h2>Home</h2>
     <ul>
-      {people.map(person => <HomeItem key={person.id} person={person} />)}
+      {people.map(person => (
+        <HomeItem key={person.id} person={person} />
+      ))}
     </ul>
   </div>
 )

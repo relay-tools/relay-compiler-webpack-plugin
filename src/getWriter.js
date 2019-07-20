@@ -13,10 +13,7 @@ const {
   schemaExtensions
 } = RelayIRTransforms
 
-export default (
-  languagePlugin: any,
-  config: any
-) => ({
+export default (languagePlugin: any, config: any) => ({
   onlyValidate,
   schema,
   documents,
