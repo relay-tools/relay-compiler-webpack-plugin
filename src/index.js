@@ -36,7 +36,9 @@ class RaiseErrorsReporter {
 
 class RelayCompilerWebpackPlugin {
   parserConfigs: {}
+
   writerConfigs: {}
+
   languagePlugin: PluginInterface
 
   constructor (options: {
