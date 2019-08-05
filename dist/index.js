@@ -50,6 +50,8 @@ class RelayCompilerWebpackPlugin {
 
     _defineProperty(this, "languagePlugin", void 0);
 
+    _defineProperty(this, "options", void 0);
+
     if (!options) {
       throw new Error('You must provide options to RelayCompilerWebpackPlugin.');
     }
@@ -95,6 +97,7 @@ class RelayCompilerWebpackPlugin {
       })
     });
     this.languagePlugin = language;
+    this.options = options;
   }
 
   createParserConfigs({
@@ -141,7 +144,17 @@ class RelayCompilerWebpackPlugin {
     return {
       [languagePlugin.outputExtension]: {
         writeFiles: (0, _getWriter.default)(languagePlugin, config),
-        isGeneratedFile: filePath => filePath.endsWith('.graphql.' + languagePlugin.outputExtension) && filePath.includes('__generated__'),
+        isGeneratedFile: filePath => {
+          if (filePath.endsWith('.graphql.' + languagePlugin.outputExtension)) {
+            if (this.options.artifactDirectory) {
+              return filePath.startsWith(this.options.artifactDirectory);
+            } else {
+              return filePath.includes('__generated__');
+            }
+          }
+
+          return false;
+        },
         parser: sourceParserName,
         baseParsers: ['graphql']
       }
@@ -179,13 +192,19 @@ class RelayCompilerWebpackPlugin {
   }
 
   runCompile(compile, result, callback) {
-    if (result && result.contextInfo.issuer && result.request.match(/__generated__/)) {
+    if (result && result.contextInfo.issuer && (this.options.artifactDirectory || result.request.match(/__generated__/))) {
       const request = _path.default.resolve(_path.default.dirname(result.contextInfo.issuer), result.request);
 
+      if (this.options.artifactDirectory && !request.startsWith(this.options.artifactDirectory)) {
+        callback(null, result);
+        return;
+      }
+
       compile(result.contextInfo.issuer, request).then(() => callback(null, result)).catch(error => callback(error));
-    } else {
-      callback(null, result);
+      return;
     }
+
+    callback(null, result);
   }
 
   apply(compiler) {
