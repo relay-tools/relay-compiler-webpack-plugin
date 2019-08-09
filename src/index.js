@@ -15,6 +15,18 @@ import getFilepathsFromGlob from './getFilepathsFromGlob'
 import type { GraphQLSchema } from 'graphql'
 import type { Compiler } from 'webpack'
 
+type RelayCompilerWebpackPluginOptions = {
+    schema: string | GraphQLSchema,
+    src: string,
+    getParser?: Function,
+    extensions: Array<string>,
+    include: Array<string>,
+    exclude: Array<string>,
+    languagePlugin?: () => PluginInterface,
+    artifactDirectory?: string,
+    config: any
+}
+
 // Was using a ConsoleReporter with quiet true (which is essentially a no-op)
 // This implements graphql-compiler GraphQLReporter
 // https://github.com/facebook/relay/blob/v1.7.0/packages/graphql-compiler/reporters/GraphQLReporter.js
@@ -41,17 +53,9 @@ class RelayCompilerWebpackPlugin {
 
   languagePlugin: PluginInterface
 
-  constructor (options: {
-    schema: string | GraphQLSchema,
-    src: string,
-    getParser?: Function,
-    extensions: Array<string>,
-    include: Array<string>,
-    exclude: Array<string>,
-    languagePlugin?: () => PluginInterface,
-    artifactDirectory?: string,
-    config: any
-  }) {
+  options: RelayCompilerWebpackPluginOptions
+
+  constructor (options: RelayCompilerWebpackPluginOptions) {
     if (!options) {
       throw new Error('You must provide options to RelayCompilerWebpackPlugin.')
     }
@@ -114,6 +118,7 @@ class RelayCompilerWebpackPlugin {
     })
 
     this.languagePlugin = language
+    this.options = options
   }
 
   createParserConfigs ({
@@ -176,9 +181,17 @@ class RelayCompilerWebpackPlugin {
     return {
       [languagePlugin.outputExtension]: {
         writeFiles: getWriter(languagePlugin, config),
-        isGeneratedFile: (filePath: string) =>
-          filePath.endsWith('.graphql.' + languagePlugin.outputExtension) &&
-          filePath.includes('__generated__'),
+        isGeneratedFile: (filePath: string) => {
+          if (filePath.endsWith('.graphql.' + languagePlugin.outputExtension)) {
+            if (this.options.artifactDirectory) {
+              return filePath.startsWith(this.options.artifactDirectory)
+            } else {
+              return filePath.includes('__generated__')
+            }
+          }
+
+          return false
+        },
         parser: sourceParserName,
         baseParsers: ['graphql']
       }
@@ -222,18 +235,26 @@ class RelayCompilerWebpackPlugin {
     if (
       result &&
       result.contextInfo.issuer &&
-      result.request.match(/__generated__/)
+      (this.options.artifactDirectory || result.request.match(/__generated__/))
     ) {
       const request = path.resolve(
         path.dirname(result.contextInfo.issuer),
         result.request
       )
+
+      if (this.options.artifactDirectory && !request.startsWith(this.options.artifactDirectory)) {
+        callback(null, result)
+        return
+      }
+
       compile(result.contextInfo.issuer, request)
         .then(() => callback(null, result))
         .catch(error => callback(error))
-    } else {
-      callback(null, result)
+
+      return
     }
+
+    callback(null, result)
   }
 
   apply (compiler: Compiler) {
