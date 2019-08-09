@@ -7,6 +7,9 @@ export default ({ relayCompilerWebpackPlugin }) => ({
     path: path.resolve(__dirname, 'dist'),
     filename: 'index.js'
   },
+  performance: {
+    hints: false
+  },
   module: {
     rules: [
       {
