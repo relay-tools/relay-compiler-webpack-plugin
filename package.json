@@ -60,14 +60,14 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-standard": "^4.0.0",
-    "flow-bin": "0.104.0",
+    "flow-bin": "0.105.2",
     "jest": "^24.0.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-relay": "^5.0.0",
     "relay-compiler": "^5.0.0",
     "rimraf": "^2.6.2",
-    "standard": "^13.0.2",
+    "standard": "^14.0.0-0",
     "webpack": "^4.5.0"
   },
   "babel": {

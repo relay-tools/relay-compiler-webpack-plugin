@@ -14,6 +14,7 @@ import getFilepathsFromGlob from './getFilepathsFromGlob'
 
 import type { GraphQLSchema } from 'graphql'
 import type { Compiler } from 'webpack'
+import type { WriterConfig } from './getWriter'
 
 type RelayCompilerWebpackPluginOptions = {
     schema: string | GraphQLSchema,
@@ -176,7 +177,7 @@ class RelayCompilerWebpackPlugin {
   }: {
     sourceParserName: string,
     languagePlugin: PluginInterface,
-    config: any
+    config: WriterConfig
   }) {
     return {
       [languagePlugin.outputExtension]: {

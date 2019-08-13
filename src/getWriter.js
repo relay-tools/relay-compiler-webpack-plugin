@@ -4,6 +4,11 @@ import type { WriteFilesOptions } from 'relay-compiler'
 import RelayFileWriter from 'relay-compiler/lib/RelayFileWriter'
 import RelayIRTransforms from 'relay-compiler/lib/RelayIRTransforms'
 
+export type WriterConfig = {
+  outputDir?: string,
+  baseDir: string
+}
+
 const {
   commonTransforms,
   codegenTransforms,
@@ -13,7 +18,7 @@ const {
   schemaExtensions
 } = RelayIRTransforms
 
-export default (languagePlugin: any, config: any) => ({
+export default (languagePlugin: any, config: WriterConfig) => ({
   onlyValidate,
   schema,
   documents,

@@ -34,7 +34,9 @@ var _default = (languagePlugin, config) => ({
   sourceControl,
   reporter
 }) => _RelayFileWriter.default.writeAll({
-  config: _objectSpread({}, config, {
+  config: _objectSpread({
+    customScalars: {}
+  }, config, {
     compilerTransforms: {
       commonTransforms,
       codegenTransforms,
@@ -42,7 +44,6 @@ var _default = (languagePlugin, config) => ({
       printTransforms,
       queryTransforms
     },
-    customScalars: {},
     formatModule: languagePlugin.formatModule,
     optionalInputFieldsForFlow: [],
     schemaExtensions,
