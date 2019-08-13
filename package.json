@@ -40,7 +40,8 @@
   },
   "dependencies": {
     "fast-glob": "~3.0.3",
-    "graphql": "14"
+    "graphql": "14",
+    "relay-config": "^5.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",

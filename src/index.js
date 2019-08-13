@@ -4,6 +4,7 @@ import { Runner, DotGraphQLParser } from 'relay-compiler'
 import RelayLanguagePluginJavaScript from 'relay-compiler/lib/RelayLanguagePluginJavaScript'
 import type { PluginInterface } from 'relay-compiler/lib/RelayLanguagePluginInterface'
 import RelaySourceModuleParser from 'relay-compiler/lib/RelaySourceModuleParser'
+import RelayConfig from 'relay-config'
 
 import fs from 'fs'
 import path from 'path'
@@ -55,9 +56,29 @@ class RelayCompilerWebpackPlugin {
 
   options: RelayCompilerWebpackPluginOptions
 
-  constructor (options: RelayCompilerWebpackPluginOptions) {
-    if (!options) {
-      throw new Error('You must provide options to RelayCompilerWebpackPlugin.')
+  constructor (pluginOptions: RelayCompilerWebpackPluginOptions = {}) {
+    let {
+      src,
+      schema,
+      artifactDirectory,
+      language: languagePlugin,
+      extensions: configExtensions,
+      ...config
+    } = RelayConfig.loadConfig() || {}
+
+    if (typeof languagePlugin === 'string') {
+      // $FlowFixMe
+      languagePlugin = require(languagePlugin)
+    }
+
+    const options = {
+      src,
+      schema,
+      languagePlugin,
+      artifactDirectory,
+      extensions: configExtensions,
+      ...pluginOptions,
+      config: { ...config, ...pluginOptions.config }
     }
 
     if (!options.schema) {
