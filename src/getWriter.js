@@ -23,6 +23,7 @@ export default (languagePlugin: any, config: any) => ({
 }: WriteFilesOptions) =>
   RelayFileWriter.writeAll({
     config: {
+      customScalars: {},
       ...config,
       compilerTransforms: {
         commonTransforms,
@@ -31,7 +32,6 @@ export default (languagePlugin: any, config: any) => ({
         printTransforms,
         queryTransforms
       },
-      customScalars: {},
       formatModule: languagePlugin.formatModule,
       optionalInputFieldsForFlow: [],
       schemaExtensions,
