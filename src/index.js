@@ -11,10 +11,12 @@ import path from 'path'
 import getSchema from './getSchema'
 import getWriter from './getWriter'
 import getFilepathsFromGlob from './getFilepathsFromGlob'
+import { getRelayCompilerPluginHooks } from './hooks'
 
 import type { GraphQLSchema } from 'graphql'
-import type { Compiler } from 'webpack'
+import type { Compiler, Compilation } from 'webpack'
 import type { WriterConfig } from './getWriter'
+import type { PluginHooks } from './hooks'
 
 type RelayCompilerWebpackPluginOptions = {
     schema: string | GraphQLSchema,
@@ -55,6 +57,8 @@ class RelayCompilerWebpackPlugin {
   languagePlugin: PluginInterface
 
   options: RelayCompilerWebpackPluginOptions
+
+  static getHooks = getRelayCompilerPluginHooks
 
   constructor (options: RelayCompilerWebpackPluginOptions) {
     if (!options) {
@@ -199,7 +203,7 @@ class RelayCompilerWebpackPlugin {
     }
   }
 
-  async compile (issuer: string, request: string) {
+  async compile (issuer: string, request: string, hooks: PluginHooks) {
     const errors = []
     try {
       // Can this be set up in constructor and use same instance every time?
@@ -210,7 +214,10 @@ class RelayCompilerWebpackPlugin {
         onlyValidate: false,
         skipPersist: true
       })
-      return runner.compile(this.languagePlugin.outputExtension)
+
+      return hooks.beforeWrite.promise()
+        .then(() => runner.compile(this.languagePlugin.outputExtension))
+        .then(compileResult => hooks.afterWrite.promise(compileResult))
     } catch (error) {
       errors.push(error)
     }
@@ -220,10 +227,11 @@ class RelayCompilerWebpackPlugin {
     }
   }
 
-  cachedCompiler () {
+  cachedCompiler (compilation: Compilation) {
+    const hooks = getRelayCompilerPluginHooks(compilation)
     let result
     return (issuer: string, request: string) => {
-      if (!result) result = this.compile(issuer, request)
+      if (!result) result = this.compile(issuer, request, hooks)
       return result
     }
   }
@@ -262,8 +270,8 @@ class RelayCompilerWebpackPlugin {
     if (compiler.hooks) {
       compiler.hooks.compilation.tap(
         'RelayCompilerWebpackPlugin',
-        (compilation, params) => {
-          const compile = this.cachedCompiler()
+        (compilation: Compilation, params) => {
+          const compile = this.cachedCompiler(compilation)
           params.normalModuleFactory.hooks.beforeResolve.tapAsync(
             'RelayCompilerWebpackPlugin',
             (result, callback) => {
@@ -273,8 +281,8 @@ class RelayCompilerWebpackPlugin {
         }
       )
     } else {
-      compiler.plugin('compilation', (compilation, params) => {
-        const compile = this.cachedCompiler()
+      compiler.plugin('compilation', (compilation: Compilation, params) => {
+        const compile = this.cachedCompiler(compilation)
         params.normalModuleFactory.plugin(
           'before-resolve',
           (result, callback) => {
