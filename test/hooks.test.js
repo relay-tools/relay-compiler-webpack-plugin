@@ -30,19 +30,22 @@ describe('RelayCompilerWebpackPlugin', () => {
 
     const plugin = {
       apply (compiler) {
-        compiler.hooks.compilation.tap(
-          'TestHooksPlugin',
-          (compilation) => {
-            const hooks = RelayCompilerWebpackPlugin.getHooks(compilation)
-            hooks.beforeWrite.tapPromise('test-hooks', async () => {
-              beforeWriteSpy()
-            })
+        const setUpHooks = (compilation) => {
+          const hooks = RelayCompilerWebpackPlugin.getHooks(compilation)
+          hooks.beforeWrite.tapPromise('test-hooks', async () => {
+            beforeWriteSpy()
+          })
 
-            hooks.afterWrite.tapPromise('test-hooks', async (result) => {
-              afterWriteSpy(result)
-            })
-          }
-        )
+          hooks.afterWrite.tapPromise('test-hooks', async (result) => {
+            afterWriteSpy(result)
+          })
+        }
+
+        if (compiler.hooks) {
+          compiler.hooks.compilation.tap('TestHooksPlugin', setUpHooks)
+        } else {
+          compiler.plugin('compilation', setUpHooks)
+        }
       }
     }
 
