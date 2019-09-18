@@ -655,14 +655,6 @@
     "@babel/helper-regex" "^7.4.4"
     regexpu-core "^4.5.4"
 
-"@babel/polyfill@^7.0.0":
-  version "7.4.4"
-  resolved "https://registry.yarnpkg.com/@babel/polyfill/-/polyfill-7.4.4.tgz#78801cf3dbe657844eeabf31c1cae3828051e893"
-  integrity sha512-WlthFLfhQQhh+A2Gn5NSFl0Huxz36x86Jn+E9OW7ibK8edKPq+KLy4apM1yDpQ8kJOVi1OVjpP4vSDLdrI04dg==
-  dependencies:
-    core-js "^2.6.5"
-    regenerator-runtime "^0.13.2"
-
 "@babel/preset-env@^7.1.0":
   version "7.5.5"
   resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.5.5.tgz#bc470b53acaa48df4b8db24a570d6da1fef53c9a"
@@ -2046,7 +2038,7 @@ core-js-compat@^3.1.1:
     browserslist "^4.6.6"
     semver "^6.3.0"
 
-core-js@^2.4.1, core-js@^2.6.5:
+core-js@^2.4.1:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.9.tgz#6b4b214620c834152e179323727fc19741b084f2"
   integrity sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A==
@@ -5408,15 +5400,15 @@ react-is@^16.8.1, react-is@^16.8.4:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.9.0.tgz#21ca9561399aad0ff1a7701c01683e8ca981edcb"
   integrity sha512-tJBzzzIgnnRfEm046qRcURvwQnZVXmuCbscxUO5RWrGTXpon2d4c8mI0D8WE6ydVIm29JiLB6+RslkIvym9Rjw==
 
-react-relay@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/react-relay/-/react-relay-5.0.0.tgz#66af68e8e5fad05879a3f21f895a0296ef2741a8"
-  integrity sha512-gpUvedaCaPVPT0nMrTbev2TzrU0atgq2j/zAnGHiR9WgqRXwtHsK6FWFN65HRbopO2DzuJx9VZ2I3VO6uL5EMA==
+react-relay@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/react-relay/-/react-relay-6.0.0.tgz#2a54274a471ef801a465704e58f1db91059ad1d3"
+  integrity sha512-F0UO50TNIyfkTaCnKgbniATIWPpaX0ukQ5QPdaRRwL1qxslx90Umi83XaaiHyy1etKVePMZ+DHCd1aV7yw1AKA==
   dependencies:
     "@babel/runtime" "^7.0.0"
     fbjs "^1.0.0"
     nullthrows "^1.1.0"
-    relay-runtime "5.0.0"
+    relay-runtime "6.0.0"
 
 react@^16.6.3:
   version "16.9.0"
@@ -5556,15 +5548,14 @@ regjsparser@^0.6.0:
   dependencies:
     jsesc "~0.5.0"
 
-relay-compiler@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/relay-compiler/-/relay-compiler-5.0.0.tgz#ca2514bda20ff829550ac87f126d07a1517bf6de"
-  integrity sha512-q8gKlPRTJe/TwtIokbdXehy1SxDFIyLBZdsfg60J4OcqyviIx++Vhc+h4lXzBY8LsBVaJjTuolftYcXJLhlE6g==
+relay-compiler@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/relay-compiler/-/relay-compiler-6.0.0.tgz#a70ecb39b59dea507261aeda704c071326d69d5e"
+  integrity sha512-8K8cCwrOTqu3usF8GXQ+JEgxcTxJ5qVFqfNpfMYrRpMraXrBmykcLRpj38p2MxtcjyqkE2ZnUe5huW5/469obA==
   dependencies:
     "@babel/core" "^7.0.0"
     "@babel/generator" "^7.0.0"
     "@babel/parser" "^7.0.0"
-    "@babel/polyfill" "^7.0.0"
     "@babel/runtime" "^7.0.0"
     "@babel/traverse" "^7.0.0"
     "@babel/types" "^7.0.0"
@@ -5575,14 +5566,14 @@ relay-compiler@^5.0.0:
     fbjs "^1.0.0"
     immutable "~3.7.6"
     nullthrows "^1.1.0"
-    relay-runtime "5.0.0"
+    relay-runtime "6.0.0"
     signedsource "^1.0.0"
     yargs "^9.0.0"
 
-relay-runtime@5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/relay-runtime/-/relay-runtime-5.0.0.tgz#7c688ee621d6106a2cd9f3a3706eb6d717c7f660"
-  integrity sha512-lrC2CwfpWWHBAN608eENAt5Bc5zqXXE2O9HSo8tc6Gy5TxfK+fU+x9jdwXQ2mXxVPgANYtYeKzU5UTfcX0aDEw==
+relay-runtime@6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/relay-runtime/-/relay-runtime-6.0.0.tgz#073ec2408f41a28c3a7310d71dd5f42f8e4e4bf3"
+  integrity sha512-zIXQqFfe0zBCVzKbMGEPMvKFxfbE3pY2RbZsKBvHAr/vMDj6OX9E+f4R4udE5xvMbI7g+baYFHi2I9NDEydGaQ==
   dependencies:
     "@babel/runtime" "^7.0.0"
     fbjs "^1.0.0"

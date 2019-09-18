@@ -1,8 +1,8 @@
 // @flow
 
 import type { WriteFilesOptions } from 'relay-compiler'
-import RelayFileWriter from 'relay-compiler/lib/RelayFileWriter'
-import RelayIRTransforms from 'relay-compiler/lib/RelayIRTransforms'
+import RelayFileWriter from 'relay-compiler/lib/codegen/RelayFileWriter'
+import RelayIRTransforms from 'relay-compiler/lib/core/RelayIRTransforms'
 
 export type WriterConfig = {
   outputDir?: string,
