@@ -92,6 +92,10 @@ describe('RelayCompilerWebpackPlugin', () => {
 
     webpack(webpackConfig, (err, stats) => {
       expect(err).toBeFalsy()
+      if (stats.compilation.logging) {
+        expect(stats.compilation.logging.get('RelayCompilerPlugin')).toHaveLength(2)
+      }
+
       expect(stats.compilation.errors).toHaveLength(0)
       expect(stats.compilation.warnings).toHaveLength(0)
 

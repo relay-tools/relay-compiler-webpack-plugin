@@ -1,8 +1,7 @@
 // @flow
 
 import type { WriteFilesOptions } from 'relay-compiler'
-import RelayFileWriter from 'relay-compiler/lib/RelayFileWriter'
-import RelayIRTransforms from 'relay-compiler/lib/RelayIRTransforms'
+import { FileWriter, IRTransforms } from 'relay-compiler/lib'
 
 export type WriterConfig = {
   outputDir?: string,
@@ -16,7 +15,7 @@ const {
   printTransforms,
   queryTransforms,
   schemaExtensions
-} = RelayIRTransforms
+} = IRTransforms
 
 export default (languagePlugin: any, config: WriterConfig) => ({
   onlyValidate,
@@ -26,7 +25,7 @@ export default (languagePlugin: any, config: WriterConfig) => ({
   sourceControl,
   reporter
 }: WriteFilesOptions) =>
-  RelayFileWriter.writeAll({
+  FileWriter.writeAll({
     config: {
       customScalars: {},
       ...config,
