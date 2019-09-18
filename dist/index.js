@@ -2,9 +2,9 @@
 
 var _relayCompiler = require("relay-compiler");
 
-var _RelayLanguagePluginJavaScript = _interopRequireDefault(require("relay-compiler/lib/RelayLanguagePluginJavaScript"));
+var _RelayLanguagePluginJavaScript = _interopRequireDefault(require("relay-compiler/lib/language/javascript/RelayLanguagePluginJavaScript"));
 
-var _RelaySourceModuleParser = _interopRequireDefault(require("relay-compiler/lib/RelaySourceModuleParser"));
+var _RelaySourceModuleParser = _interopRequireDefault(require("relay-compiler/lib/core/RelaySourceModuleParser"));
 
 var _fs = _interopRequireDefault(require("fs"));
 
@@ -29,7 +29,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 // https://github.com/facebook/relay/blob/v1.7.0/packages/graphql-compiler/reporters/GraphQLReporter.js
 // Wasn't able to find a way to import the GraphQLReporter interface to declare that it is implemented
 class RaiseErrorsReporter {
-  reportMessage(message) {// process.stdout.write('Report message: ' + message + '\n');
+  constructor(logger) {
+    _defineProperty(this, "logger", void 0);
+
+    this.logger = logger;
+  }
+
+  reportMessage(message) {
+    if (this.logger) this.logger.log(message);else console.log(message);
   }
 
   reportTime(name, ms) {// process.stdout.write('Report time: ' + name + ' ' + ms + '\n');
@@ -72,31 +79,6 @@ class RelayCompilerWebpackPlugin {
       throw new Error(`Could not find the [src] provided (${options.src})`);
     }
 
-    const language = (options.languagePlugin || _RelayLanguagePluginJavaScript.default)();
-
-    const extensions = options.extensions !== undefined ? options.extensions : language.inputExtensions;
-    const sourceParserName = extensions.join('/');
-    const include = options.include !== undefined ? options.include : ['**'];
-    const exclude = options.exclude !== undefined ? options.exclude : ['**/node_modules/**', '**/__mocks__/**', '**/__tests__/**', '**/__generated__/**'];
-    this.parserConfigs = this.createParserConfigs({
-      sourceParserName,
-      languagePlugin: language,
-      include,
-      exclude,
-      schema: options.schema,
-      getParser: options.getParser,
-      baseDir: options.src,
-      extensions
-    });
-    this.writerConfigs = this.createWriterConfigs({
-      sourceParserName,
-      languagePlugin: language,
-      config: _objectSpread({}, options.config, {
-        outputDir: options.artifactDirectory,
-        baseDir: options.src
-      })
-    });
-    this.languagePlugin = language;
     this.options = options;
   }
 
@@ -161,15 +143,22 @@ class RelayCompilerWebpackPlugin {
     };
   }
 
-  async compile(issuer, request) {
+  async compile(issuer, request, compilation) {
     const errors = [];
 
     try {
-      // Can this be set up in constructor and use same instance every time?
+      let logger; // webpack 4.38+
+
+      if (compilation.getLogger) {
+        logger = compilation.getLogger('RelayCompilerPlugin');
+      }
+
+      const reporter = this.options.getReporter ? this.options.getReporter(logger) : new RaiseErrorsReporter(logger); // Can this be set up in constructor and use same instance every time?
+
       const runner = new _relayCompiler.Runner({
+        reporter,
         parserConfigs: this.parserConfigs,
         writerConfigs: this.writerConfigs,
-        reporter: new RaiseErrorsReporter(),
         onlyValidate: false,
         skipPersist: true
       });
@@ -183,10 +172,10 @@ class RelayCompilerWebpackPlugin {
     }
   }
 
-  cachedCompiler() {
+  cachedCompiler(compilation) {
     let result;
     return (issuer, request) => {
-      if (!result) result = this.compile(issuer, request);
+      if (!result) result = this.compile(issuer, request, compilation);
       return result;
     };
   }
@@ -208,16 +197,46 @@ class RelayCompilerWebpackPlugin {
   }
 
   apply(compiler) {
+    const {
+      options
+    } = this;
+
+    const language = (options.languagePlugin || _RelayLanguagePluginJavaScript.default)();
+
+    const extensions = options.extensions !== undefined ? options.extensions : language.inputExtensions;
+    const sourceParserName = extensions.join('/');
+    const include = options.include !== undefined ? options.include : ['**'];
+    const exclude = options.exclude !== undefined ? options.exclude : ['**/node_modules/**', '**/__mocks__/**', '**/__tests__/**', '**/__generated__/**'];
+    this.parserConfigs = this.createParserConfigs({
+      sourceParserName,
+      languagePlugin: language,
+      include,
+      exclude,
+      schema: options.schema,
+      getParser: options.getParser,
+      baseDir: options.src,
+      extensions
+    });
+    this.writerConfigs = this.createWriterConfigs({
+      sourceParserName,
+      languagePlugin: language,
+      config: _objectSpread({}, options.config, {
+        outputDir: options.artifactDirectory,
+        baseDir: options.src
+      })
+    });
+    this.languagePlugin = language;
+
     if (compiler.hooks) {
       compiler.hooks.compilation.tap('RelayCompilerWebpackPlugin', (compilation, params) => {
-        const compile = this.cachedCompiler();
+        const compile = this.cachedCompiler(compilation);
         params.normalModuleFactory.hooks.beforeResolve.tapAsync('RelayCompilerWebpackPlugin', (result, callback) => {
           this.runCompile(compile, result, callback);
         });
       });
     } else {
       compiler.plugin('compilation', (compilation, params) => {
-        const compile = this.cachedCompiler();
+        const compile = this.cachedCompiler(compilation);
         params.normalModuleFactory.plugin('before-resolve', (result, callback) => {
           this.runCompile(compile, result, callback);
         });

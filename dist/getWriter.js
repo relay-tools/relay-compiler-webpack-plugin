@@ -5,11 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _RelayFileWriter = _interopRequireDefault(require("relay-compiler/lib/RelayFileWriter"));
-
-var _RelayIRTransforms = _interopRequireDefault(require("relay-compiler/lib/RelayIRTransforms"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _lib = require("relay-compiler/lib");
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -24,7 +20,7 @@ const {
   printTransforms,
   queryTransforms,
   schemaExtensions
-} = _RelayIRTransforms.default;
+} = _lib.IRTransforms;
 
 var _default = (languagePlugin, config) => ({
   onlyValidate,
@@ -33,7 +29,7 @@ var _default = (languagePlugin, config) => ({
   baseDocuments,
   sourceControl,
   reporter
-}) => _RelayFileWriter.default.writeAll({
+}) => _lib.FileWriter.writeAll({
   config: _objectSpread({
     customScalars: {}
   }, config, {
