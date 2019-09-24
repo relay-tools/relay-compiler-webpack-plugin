@@ -35,7 +35,7 @@
     "prepublishOnly": "yarn clean && yarn build"
   },
   "peerDependencies": {
-    "relay-compiler": "^5.0.0",
+    "relay-compiler": "^6.0.0",
     "webpack": ">=3.0.0"
   },
   "dependencies": {
@@ -54,13 +54,17 @@
     "babel-jest": "^24.0.0",
     "babel-loader": "^8.0.4",
     "babel-plugin-relay": "^6.0.0",
-    "eslint": "^6.0.1",
+    "eslint": "^6.1.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "eslint-config-airbnb": "18.0.1",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-flowtype": "^4.2.0",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-standard": "^4.0.0",
-    "flow-bin": "0.107.0",
+    "flow-bin": "0.108.0",
     "jest": "^24.0.0",
     "npm-run-all": "^4.1.5",
     "react": "^16.6.3",
@@ -94,12 +98,6 @@
     "coveragePathIgnorePatterns": [
       "/node_modules/",
       "/test/"
-    ]
-  },
-  "standard": {
-    "parser": "babel-eslint",
-    "plugins": [
-      "flowtype"
     ]
   }
 }

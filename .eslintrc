@@ -1,6 +1,7 @@
 {
   "parser": "babel-eslint",
   "extends": [
-    "standard"
+    "standard",
+    "airbnb"
   ]
 }

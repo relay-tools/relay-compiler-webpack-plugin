@@ -1,7 +1,7 @@
 // @flow
 
-import type { WriteFilesOptions } from 'relay-compiler'
-import { FileWriter, IRTransforms } from 'relay-compiler/lib'
+import type { WriteFilesOptions } from 'relay-compiler';
+import { FileWriter, IRTransforms } from 'relay-compiler/lib';
 
 export type WriterConfig = {
   outputDir?: string,
@@ -14,8 +14,8 @@ const {
   fragmentTransforms,
   printTransforms,
   queryTransforms,
-  schemaExtensions
-} = IRTransforms
+  schemaExtensions,
+} = IRTransforms;
 
 export default (languagePlugin: any, config: WriterConfig) => ({
   onlyValidate,
@@ -23,30 +23,29 @@ export default (languagePlugin: any, config: WriterConfig) => ({
   documents,
   baseDocuments,
   sourceControl,
-  reporter
-}: WriteFilesOptions) =>
-  FileWriter.writeAll({
-    config: {
-      customScalars: {},
-      ...config,
-      compilerTransforms: {
-        commonTransforms,
-        codegenTransforms,
-        fragmentTransforms,
-        printTransforms,
-        queryTransforms
-      },
-      formatModule: languagePlugin.formatModule,
-      optionalInputFieldsForFlow: [],
-      schemaExtensions,
-      useHaste: false,
-      extension: languagePlugin.outputExtension,
-      typeGenerator: languagePlugin.typeGenerator
+  reporter,
+}: WriteFilesOptions) => FileWriter.writeAll({
+  config: {
+    customScalars: {},
+    ...config,
+    compilerTransforms: {
+      commonTransforms,
+      codegenTransforms,
+      fragmentTransforms,
+      printTransforms,
+      queryTransforms,
     },
-    onlyValidate,
-    schema,
-    baseDocuments,
-    documents,
-    reporter,
-    sourceControl
-  })
+    formatModule: languagePlugin.formatModule,
+    optionalInputFieldsForFlow: [],
+    schemaExtensions,
+    useHaste: false,
+    extension: languagePlugin.outputExtension,
+    typeGenerator: languagePlugin.typeGenerator,
+  },
+  onlyValidate,
+  schema,
+  baseDocuments,
+  documents,
+  reporter,
+  sourceControl,
+});

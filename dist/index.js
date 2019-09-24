@@ -16,6 +16,8 @@ var _getWriter = _interopRequireDefault(require("./getWriter"));
 
 var _getFilepathsFromGlob = _interopRequireDefault(require("./getFilepathsFromGlob"));
 
+var _createRaiseErrorsReporter = _interopRequireDefault(require("./createRaiseErrorsReporter"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -24,29 +26,40 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-// Was using a ConsoleReporter with quiet true (which is essentially a no-op)
-// This implements graphql-compiler GraphQLReporter
-// https://github.com/facebook/relay/blob/v1.7.0/packages/graphql-compiler/reporters/GraphQLReporter.js
-// Wasn't able to find a way to import the GraphQLReporter interface to declare that it is implemented
-class RaiseErrorsReporter {
-  constructor(logger) {
-    _defineProperty(this, "logger", void 0);
-
-    this.logger = logger;
-  }
-
-  reportMessage(message) {
-    if (this.logger) this.logger.log(message);else console.log(message);
-  }
-
-  reportTime(name, ms) {// process.stdout.write('Report time: ' + name + ' ' + ms + '\n');
-  }
-
-  reportError(caughtLocation, error) {
-    // process.stdout.write('Report error: ' + caughtLocation + ' ' + error.toString() + '\n');
-    throw error;
-  }
-
+function createParserConfigs({
+  baseDir,
+  getParser,
+  sourceParserName,
+  languagePlugin,
+  include,
+  exclude,
+  schema,
+  extensions
+}) {
+  const schemaFn = typeof schema === 'string' ? () => (0, _getSchema.default)(schema) : () => schema;
+  const sourceModuleParser = (0, _RelaySourceModuleParser.default)(languagePlugin.findGraphQLTags);
+  const fileOptions = {
+    extensions,
+    include,
+    exclude
+  };
+  return {
+    [sourceParserName]: {
+      baseDir,
+      getFileFilter: sourceModuleParser.getFileFilter,
+      getParser: getParser || sourceModuleParser.getParser,
+      getSchema: schemaFn,
+      filepaths: (0, _getFilepathsFromGlob.default)(baseDir, fileOptions)
+    },
+    graphql: {
+      baseDir,
+      getParser: _relayCompiler.DotGraphQLParser.getParser,
+      getSchema: schemaFn,
+      filepaths: (0, _getFilepathsFromGlob.default)(baseDir, _objectSpread({}, fileOptions, {
+        extensions: ['graphql']
+      }))
+    }
+  };
 }
 
 class RelayCompilerWebpackPlugin {
@@ -82,42 +95,6 @@ class RelayCompilerWebpackPlugin {
     this.options = options;
   }
 
-  createParserConfigs({
-    baseDir,
-    getParser,
-    sourceParserName,
-    languagePlugin,
-    include,
-    exclude,
-    schema,
-    extensions
-  }) {
-    const schemaFn = typeof schema === 'string' ? () => (0, _getSchema.default)(schema) : () => schema;
-    const sourceModuleParser = (0, _RelaySourceModuleParser.default)(languagePlugin.findGraphQLTags);
-    const fileOptions = {
-      extensions,
-      include,
-      exclude
-    };
-    return {
-      [sourceParserName]: {
-        baseDir,
-        getFileFilter: sourceModuleParser.getFileFilter,
-        getParser: getParser || sourceModuleParser.getParser,
-        getSchema: schemaFn,
-        filepaths: (0, _getFilepathsFromGlob.default)(baseDir, fileOptions)
-      },
-      graphql: {
-        baseDir,
-        getParser: _relayCompiler.DotGraphQLParser.getParser,
-        getSchema: schemaFn,
-        filepaths: (0, _getFilepathsFromGlob.default)(baseDir, _objectSpread({}, fileOptions, {
-          extensions: ['graphql']
-        }))
-      }
-    };
-  }
-
   createWriterConfigs({
     sourceParserName,
     languagePlugin,
@@ -127,12 +104,12 @@ class RelayCompilerWebpackPlugin {
       [languagePlugin.outputExtension]: {
         writeFiles: (0, _getWriter.default)(languagePlugin, config),
         isGeneratedFile: filePath => {
-          if (filePath.endsWith('.graphql.' + languagePlugin.outputExtension)) {
+          if (filePath.endsWith(`.graphql.${languagePlugin.outputExtension}`)) {
             if (this.options.artifactDirectory) {
               return filePath.startsWith(this.options.artifactDirectory);
-            } else {
-              return filePath.includes('__generated__');
             }
+
+            return filePath.includes('__generated__');
           }
 
           return false;
@@ -144,32 +121,22 @@ class RelayCompilerWebpackPlugin {
   }
 
   async compile(issuer, request, compilation) {
-    const errors = [];
+    let logger; // webpack 4.38+
 
-    try {
-      let logger; // webpack 4.38+
-
-      if (compilation.getLogger) {
-        logger = compilation.getLogger('RelayCompilerPlugin');
-      }
-
-      const reporter = this.options.getReporter ? this.options.getReporter(logger) : new RaiseErrorsReporter(logger); // Can this be set up in constructor and use same instance every time?
-
-      const runner = new _relayCompiler.Runner({
-        reporter,
-        parserConfigs: this.parserConfigs,
-        writerConfigs: this.writerConfigs,
-        onlyValidate: false,
-        skipPersist: true
-      });
-      return runner.compile(this.languagePlugin.outputExtension);
-    } catch (error) {
-      errors.push(error);
+    if (compilation.getLogger) {
+      logger = compilation.getLogger('RelayCompilerPlugin');
     }
 
-    if (errors.length) {
-      throw errors[0];
-    }
+    const reporter = this.options.getReporter ? this.options.getReporter(logger) : (0, _createRaiseErrorsReporter.default)(logger); // Can this be set up in constructor and use same instance every time?
+
+    const runner = new _relayCompiler.Runner({
+      reporter,
+      parserConfigs: this.parserConfigs,
+      writerConfigs: this.writerConfigs,
+      onlyValidate: false,
+      skipPersist: true
+    });
+    return runner.compile(this.languagePlugin.outputExtension);
   }
 
   cachedCompiler(compilation) {
@@ -207,7 +174,7 @@ class RelayCompilerWebpackPlugin {
     const sourceParserName = extensions.join('/');
     const include = options.include !== undefined ? options.include : ['**'];
     const exclude = options.exclude !== undefined ? options.exclude : ['**/node_modules/**', '**/__mocks__/**', '**/__tests__/**', '**/__generated__/**'];
-    this.parserConfigs = this.createParserConfigs({
+    this.parserConfigs = createParserConfigs({
       sourceParserName,
       languagePlugin: language,
       include,
