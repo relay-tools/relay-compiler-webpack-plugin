@@ -2,6 +2,6 @@
   "parser": "babel-eslint",
   "extends": [
     "standard",
-    "airbnb"
+    "airbnb-base"
   ]
 }
