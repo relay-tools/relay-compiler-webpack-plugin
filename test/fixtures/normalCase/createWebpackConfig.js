@@ -1,6 +1,6 @@
 import path from 'path'
 
-export default ({ relayCompilerWebpackPlugin }) => ({
+export default ({ relayCompilerWebpackPlugin, plugins = [] }) => ({
   mode: 'production',
   entry: path.join(__dirname, 'src', 'entry.js'),
   output: {
@@ -19,5 +19,5 @@ export default ({ relayCompilerWebpackPlugin }) => ({
       }
     ]
   },
-  plugins: [relayCompilerWebpackPlugin]
+  plugins: [relayCompilerWebpackPlugin, ...plugins]
 })

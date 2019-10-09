@@ -13,7 +13,15 @@ import getSchema from './getSchema';
 import getWriter from './getWriter';
 import getFilepathsFromGlob from './getFilepathsFromGlob';
 
-import type { WriterConfig } from './getWriter';
+import getSchema from './getSchema'
+import getWriter from './getWriter'
+import getFilepathsFromGlob from './getFilepathsFromGlob'
+import { getRelayCompilerPluginHooks } from './hooks'
+
+import type { GraphQLSchema } from 'graphql'
+import type { Compiler, Compilation } from 'webpack'
+import type { WriterConfig } from './getWriter'
+import type { PluginHooks } from './hooks'
 import type { WebpackLogger } from './WebpackLogger';
 import createRaiseErrorsReporter from './createRaiseErrorsReporter';
 
@@ -86,7 +94,9 @@ class RelayCompilerWebpackPlugin {
 
   options: RelayCompilerWebpackPluginOptions
 
-  constructor(options: RelayCompilerWebpackPluginOptions) {
+  static getHooks = getRelayCompilerPluginHooks
+
+  constructor (options: RelayCompilerWebpackPluginOptions) {
     if (!options) {
       throw new Error('You must provide options to RelayCompilerWebpackPlugin.');
     }
@@ -140,7 +150,7 @@ class RelayCompilerWebpackPlugin {
     };
   }
 
-  async compile(issuer: string, request: string, compilation: Compilation) {
+  async compile (issuer: string, request: string, hooks: PluginHooks) {
     let logger;
 
     // webpack 4.38+
@@ -151,24 +161,37 @@ class RelayCompilerWebpackPlugin {
     const reporter = this.options.getReporter
       ? this.options.getReporter(logger)
       : createRaiseErrorsReporter(logger);
+    
+    const errors = []
+    try {
+      // Can this be set up in constructor and use same instance every time?
+      const runner = new Runner({
+        parserConfigs: this.parserConfigs,
+        writerConfigs: this.writerConfigs,
+        reporter,
+        onlyValidate: false,
+        skipPersist: true
+      })
 
-    // Can this be set up in constructor and use same instance every time?
-    const runner = new Runner({
-      reporter,
-      parserConfigs: this.parserConfigs,
-      writerConfigs: this.writerConfigs,
-      onlyValidate: false,
-      skipPersist: true,
-    });
-    return runner.compile(this.languagePlugin.outputExtension);
+      return hooks.beforeWrite.promise()
+        .then(() => runner.compile(this.languagePlugin.outputExtension))
+        .then(compileResult => hooks.afterWrite.promise(compileResult))
+    } catch (error) {
+      errors.push(error)
+    }
+    
+    if (errors.length > 0) {
+      throw errors[0];
+    }
   }
 
-  cachedCompiler(compilation: Compilation) {
-    let result;
+  cachedCompiler (compilation: Compilation) {
+    const hooks = getRelayCompilerPluginHooks(compilation)
+    let result
     return (issuer: string, request: string) => {
-      if (!result) result = this.compile(issuer, request, compilation);
-      return result;
-    };
+      if (!result) result = this.compile(issuer, request, hooks)
+      return result
+    }
   }
 
   runCompile(
@@ -245,8 +268,8 @@ class RelayCompilerWebpackPlugin {
     if (compiler.hooks) {
       compiler.hooks.compilation.tap(
         'RelayCompilerWebpackPlugin',
-        (compilation, params) => {
-          const compile = this.cachedCompiler(compilation);
+        (compilation: Compilation, params) => {
+          const compile = this.cachedCompiler(compilation)
           params.normalModuleFactory.hooks.beforeResolve.tapAsync(
             'RelayCompilerWebpackPlugin',
             (result, callback) => {
@@ -256,8 +279,8 @@ class RelayCompilerWebpackPlugin {
         },
       );
     } else {
-      compiler.plugin('compilation', (compilation, params) => {
-        const compile = this.cachedCompiler(compilation);
+      compiler.plugin('compilation', (compilation: Compilation, params) => {
+        const compile = this.cachedCompiler(compilation)
         params.normalModuleFactory.plugin(
           'before-resolve',
           (result, callback) => {
