@@ -1,12 +1,17 @@
 // @flow
+import { Runner, DotGraphQLParser } from 'relay-compiler';
+import RelayLanguagePluginJavaScript from 'relay-compiler/lib/language/javascript/RelayLanguagePluginJavaScript';
+import type { PluginInterface } from 'relay-compiler/lib/language/RelayLanguagePluginInterface';
+import RelaySourceModuleParser from 'relay-compiler/lib/core/RelaySourceModuleParser';
 
-import { Runner, DotGraphQLParser } from 'relay-compiler'
-import RelayLanguagePluginJavaScript from 'relay-compiler/lib/RelayLanguagePluginJavaScript'
-import type { PluginInterface } from 'relay-compiler/lib/RelayLanguagePluginInterface'
-import RelaySourceModuleParser from 'relay-compiler/lib/RelaySourceModuleParser'
+import fs from 'fs';
+import path from 'path';
 
-import fs from 'fs'
-import path from 'path'
+import type { GraphQLSchema } from 'graphql';
+import type { Compiler, Compilation } from 'webpack';
+import getSchema from './getSchema';
+import getWriter from './getWriter';
+import getFilepathsFromGlob from './getFilepathsFromGlob';
 
 import getSchema from './getSchema'
 import getWriter from './getWriter'
@@ -17,6 +22,8 @@ import type { GraphQLSchema } from 'graphql'
 import type { Compiler, Compilation } from 'webpack'
 import type { WriterConfig } from './getWriter'
 import type { PluginHooks } from './hooks'
+import type { WebpackLogger } from './WebpackLogger';
+import createRaiseErrorsReporter from './createRaiseErrorsReporter';
 
 type RelayCompilerWebpackPluginOptions = {
     schema: string | GraphQLSchema,
@@ -27,26 +34,55 @@ type RelayCompilerWebpackPluginOptions = {
     exclude: Array<string>,
     languagePlugin?: () => PluginInterface,
     artifactDirectory?: string,
+    getReporter?: (logger?: WebpackLogger) => any,
     config: any
 }
 
-// Was using a ConsoleReporter with quiet true (which is essentially a no-op)
-// This implements graphql-compiler GraphQLReporter
-// https://github.com/facebook/relay/blob/v1.7.0/packages/graphql-compiler/reporters/GraphQLReporter.js
-// Wasn't able to find a way to import the GraphQLReporter interface to declare that it is implemented
-class RaiseErrorsReporter {
-  reportMessage (message: string): void {
-    // process.stdout.write('Report message: ' + message + '\n');
-  }
+function createParserConfigs({
+  baseDir,
+  getParser,
+  sourceParserName,
+  languagePlugin,
+  include,
+  exclude,
+  schema,
+  extensions,
+}: {
+  baseDir: string,
+  getParser?: Function,
+  sourceParserName: string,
+  languagePlugin: PluginInterface,
+  schema: string | GraphQLSchema,
+  include: Array<string>,
+  exclude: Array<string>,
+  extensions: Array<string>
+}) {
+  const schemaFn = typeof schema === 'string' ? () => getSchema(schema) : () => schema;
 
-  reportTime (name: string, ms: number): void {
-    // process.stdout.write('Report time: ' + name + ' ' + ms + '\n');
-  }
+  const sourceModuleParser = RelaySourceModuleParser(
+    languagePlugin.findGraphQLTags,
+  );
 
-  reportError (caughtLocation: string, error: Error): void {
-    // process.stdout.write('Report error: ' + caughtLocation + ' ' + error.toString() + '\n');
-    throw error
-  }
+  const fileOptions = { extensions, include, exclude };
+
+  return {
+    [sourceParserName]: {
+      baseDir,
+      getFileFilter: sourceModuleParser.getFileFilter,
+      getParser: getParser || sourceModuleParser.getParser,
+      getSchema: schemaFn,
+      filepaths: getFilepathsFromGlob(baseDir, fileOptions),
+    },
+    graphql: {
+      baseDir,
+      getParser: DotGraphQLParser.getParser,
+      getSchema: schemaFn,
+      filepaths: getFilepathsFromGlob(baseDir, {
+        ...fileOptions,
+        extensions: ['graphql'],
+      }),
+    },
+  };
 }
 
 class RelayCompilerWebpackPlugin {
@@ -62,155 +98,77 @@ class RelayCompilerWebpackPlugin {
 
   constructor (options: RelayCompilerWebpackPluginOptions) {
     if (!options) {
-      throw new Error('You must provide options to RelayCompilerWebpackPlugin.')
+      throw new Error('You must provide options to RelayCompilerWebpackPlugin.');
     }
 
     if (!options.schema) {
-      throw new Error('You must provide a Relay Schema.')
+      throw new Error('You must provide a Relay Schema.');
     }
 
     if (typeof options.schema === 'string' && !fs.existsSync(options.schema)) {
       throw new Error(
-        `Could not find the [schema] provided (${options.schema}).`
-      )
+        `Could not find the [schema] provided (${options.schema}).`,
+      );
     }
 
     if (!options.src) {
-      throw new Error('You must provide a Relay `src` path.')
+      throw new Error('You must provide a Relay `src` path.');
     }
 
     if (!fs.existsSync(options.src)) {
-      throw new Error(`Could not find the [src] provided (${options.src})`)
+      throw new Error(`Could not find the [src] provided (${options.src})`);
     }
 
-    const language = (options.languagePlugin || RelayLanguagePluginJavaScript)()
-
-    const extensions =
-      options.extensions !== undefined
-        ? options.extensions
-        : language.inputExtensions
-    const sourceParserName = extensions.join('/')
-    const include = options.include !== undefined ? options.include : ['**']
-    const exclude =
-      options.exclude !== undefined
-        ? options.exclude
-        : [
-          '**/node_modules/**',
-          '**/__mocks__/**',
-          '**/__tests__/**',
-          '**/__generated__/**'
-        ]
-
-    this.parserConfigs = this.createParserConfigs({
-      sourceParserName,
-      languagePlugin: language,
-      include,
-      exclude,
-      schema: options.schema,
-      getParser: options.getParser,
-      baseDir: options.src,
-      extensions
-    })
-
-    this.writerConfigs = this.createWriterConfigs({
-      sourceParserName,
-      languagePlugin: language,
-      config: {
-        ...options.config,
-        outputDir: options.artifactDirectory,
-        baseDir: options.src
-      }
-    })
-
-    this.languagePlugin = language
-    this.options = options
+    this.options = options;
   }
 
-  createParserConfigs ({
-    baseDir,
-    getParser,
+  createWriterConfigs({
     sourceParserName,
     languagePlugin,
-    include,
-    exclude,
-    schema,
-    extensions
-  }: {
-    baseDir: string,
-    getParser?: Function,
-    sourceParserName: string,
-    languagePlugin: PluginInterface,
-    schema: string | GraphQLSchema,
-    include: Array<string>,
-    exclude: Array<string>,
-    extensions: Array<string>
-  }) {
-    const schemaFn =
-      typeof schema === 'string' ? () => getSchema(schema) : () => schema
-
-    const sourceModuleParser = RelaySourceModuleParser(
-      languagePlugin.findGraphQLTags
-    )
-
-    const fileOptions = { extensions, include, exclude }
-
-    return {
-      [sourceParserName]: {
-        baseDir,
-        getFileFilter: sourceModuleParser.getFileFilter,
-        getParser: getParser || sourceModuleParser.getParser,
-        getSchema: schemaFn,
-        filepaths: getFilepathsFromGlob(baseDir, fileOptions)
-      },
-      graphql: {
-        baseDir,
-        getParser: DotGraphQLParser.getParser,
-        getSchema: schemaFn,
-        filepaths: getFilepathsFromGlob(baseDir, {
-          ...fileOptions,
-          extensions: ['graphql']
-        })
-      }
-    }
-  }
-
-  createWriterConfigs ({
-    sourceParserName,
-    languagePlugin,
-    config
+    config,
   }: {
     sourceParserName: string,
     languagePlugin: PluginInterface,
-    config: WriterConfig
+    config: WriterConfig,
   }) {
     return {
       [languagePlugin.outputExtension]: {
         writeFiles: getWriter(languagePlugin, config),
         isGeneratedFile: (filePath: string) => {
-          if (filePath.endsWith('.graphql.' + languagePlugin.outputExtension)) {
+          if (filePath.endsWith(`.graphql.${languagePlugin.outputExtension}`)) {
             if (this.options.artifactDirectory) {
-              return filePath.startsWith(this.options.artifactDirectory)
-            } else {
-              return filePath.includes('__generated__')
+              return filePath.startsWith(this.options.artifactDirectory);
             }
+            return filePath.includes('__generated__');
           }
 
-          return false
+          return false;
         },
         parser: sourceParserName,
-        baseParsers: ['graphql']
-      }
-    }
+        baseParsers: ['graphql'],
+      },
+    };
   }
 
   async compile (issuer: string, request: string, hooks: PluginHooks) {
+    let logger;
+
+    // webpack 4.38+
+    if (compilation.getLogger) {
+      logger = compilation.getLogger('RelayCompilerPlugin');
+    }
+
+    const reporter = this.options.getReporter
+      ? this.options.getReporter(logger)
+      : createRaiseErrorsReporter(logger);
+    
     const errors = []
     try {
       // Can this be set up in constructor and use same instance every time?
       const runner = new Runner({
         parserConfigs: this.parserConfigs,
         writerConfigs: this.writerConfigs,
-        reporter: new RaiseErrorsReporter(),
+        reporter,
         onlyValidate: false,
         skipPersist: true
       })
@@ -221,9 +179,9 @@ class RelayCompilerWebpackPlugin {
     } catch (error) {
       errors.push(error)
     }
-
-    if (errors.length) {
-      throw errors[0]
+    
+    if (errors.length > 0) {
+      throw errors[0];
     }
   }
 
@@ -236,37 +194,77 @@ class RelayCompilerWebpackPlugin {
     }
   }
 
-  runCompile (
+  runCompile(
     compile: (issuer: string, request: string) => any,
     result: any,
-    callback: (error: Error | null, value: string | typeof undefined) => void
+    callback: (error: Error | null, value: string | typeof undefined) => void,
   ) {
     if (
-      result &&
-      result.contextInfo.issuer &&
-      (this.options.artifactDirectory || result.request.match(/__generated__/))
+      result
+      && result.contextInfo.issuer
+      && (this.options.artifactDirectory || result.request.match(/__generated__/))
     ) {
       const request = path.resolve(
         path.dirname(result.contextInfo.issuer),
-        result.request
-      )
+        result.request,
+      );
 
       if (this.options.artifactDirectory && !request.startsWith(this.options.artifactDirectory)) {
-        callback(null, result)
-        return
+        callback(null, result);
+        return;
       }
 
       compile(result.contextInfo.issuer, request)
         .then(() => callback(null, result))
-        .catch(error => callback(error))
+        .catch((error) => callback(error));
 
-      return
+      return;
     }
 
-    callback(null, result)
+    callback(null, result);
   }
 
-  apply (compiler: Compiler) {
+  apply(compiler: Compiler) {
+    const { options } = this;
+    const language = (options.languagePlugin || RelayLanguagePluginJavaScript)();
+
+    const extensions = options.extensions !== undefined
+      ? options.extensions
+      : language.inputExtensions;
+    const sourceParserName = extensions.join('/');
+    const include = options.include !== undefined ? options.include : ['**'];
+    const exclude = options.exclude !== undefined
+      ? options.exclude
+      : [
+        '**/node_modules/**',
+        '**/__mocks__/**',
+        '**/__tests__/**',
+        '**/__generated__/**',
+      ];
+
+    this.parserConfigs = createParserConfigs({
+      sourceParserName,
+      languagePlugin: language,
+      include,
+      exclude,
+      schema: options.schema,
+      getParser: options.getParser,
+      baseDir: options.src,
+      extensions,
+    });
+
+    this.writerConfigs = this.createWriterConfigs({
+      sourceParserName,
+      languagePlugin: language,
+      config: {
+        ...options.config,
+        outputDir: options.artifactDirectory,
+        baseDir: options.src,
+      },
+    });
+
+    this.languagePlugin = language;
+
     if (compiler.hooks) {
       compiler.hooks.compilation.tap(
         'RelayCompilerWebpackPlugin',
@@ -275,23 +273,23 @@ class RelayCompilerWebpackPlugin {
           params.normalModuleFactory.hooks.beforeResolve.tapAsync(
             'RelayCompilerWebpackPlugin',
             (result, callback) => {
-              this.runCompile(compile, result, callback)
-            }
-          )
-        }
-      )
+              this.runCompile(compile, result, callback);
+            },
+          );
+        },
+      );
     } else {
       compiler.plugin('compilation', (compilation: Compilation, params) => {
         const compile = this.cachedCompiler(compilation)
         params.normalModuleFactory.plugin(
           'before-resolve',
           (result, callback) => {
-            this.runCompile(compile, result, callback)
-          }
-        )
-      })
+            this.runCompile(compile, result, callback);
+          },
+        );
+      });
     }
   }
 }
 
-module.exports = RelayCompilerWebpackPlugin
+module.exports = RelayCompilerWebpackPlugin;

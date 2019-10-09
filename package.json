@@ -1,6 +1,6 @@
 {
   "name": "relay-compiler-webpack-plugin",
-  "version": "5.1.1",
+  "version": "6.1.0",
   "description": "Automatically run the Relay Compiler from Webpack",
   "keywords": [
     "relay",
@@ -35,13 +35,13 @@
     "prepublishOnly": "yarn clean && yarn build"
   },
   "peerDependencies": {
-    "relay-compiler": "^5.0.0",
+    "relay-compiler": "^6.0.0",
     "webpack": ">=3.0.0"
   },
   "dependencies": {
     "fast-glob": "~3.0.3",
-    "graphql": "14",
     "tappable": "^1.1.0"
+    "graphql": "^14.5.6"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
@@ -54,23 +54,24 @@
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.0.0",
     "babel-loader": "^8.0.4",
-    "babel-plugin-relay": "^5.0.0",
-    "eslint": "^6.0.1",
-    "eslint-config-standard": "^13.0.1",
+    "babel-plugin-relay": "^6.0.0",
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-standard": "^14.1.0",
     "eslint-plugin-flowtype": "^4.2.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-standard": "^4.0.0",
-    "flow-bin": "0.105.2",
+    "flow-bin": "0.109.0",
     "jest": "^24.0.0",
     "npm-run-all": "^4.1.5",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
-    "react-relay": "^5.0.0",
-    "relay-compiler": "^5.0.0",
-    "rimraf": "^2.6.2",
+    "react-relay": "^6.0.0",
+    "relay-compiler": "^6.0.0",
+    "rimraf": "^3.0.0",
     "standard": "^14.0.0-0",
-    "webpack": "^4.5.0"
+    "webpack": "^4.40.2"
   },
   "babel": {
     "presets": [
@@ -95,12 +96,6 @@
     "coveragePathIgnorePatterns": [
       "/node_modules/",
       "/test/"
-    ]
-  },
-  "standard": {
-    "parser": "babel-eslint",
-    "plugins": [
-      "flowtype"
     ]
   }
 }

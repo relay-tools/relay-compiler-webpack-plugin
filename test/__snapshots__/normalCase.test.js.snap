@@ -252,10 +252,10 @@ export type Home_people = $ReadOnlyArray<{|
   +$refType: Home_people$ref,
 |}>;
 export type Home_people$data = Home_people;
-export type Home_people$key = {
+export type Home_people$key = $ReadOnlyArray<{
   +$data?: Home_people$data,
   +$fragmentRefs: Home_people$ref,
-};
+}>;
 */
 
 
@@ -779,10 +779,10 @@ export type Home_people = $ReadOnlyArray<{|
   +$refType: Home_people$ref,
 |}>;
 export type Home_people$data = Home_people;
-export type Home_people$key = {
+export type Home_people$key = $ReadOnlyArray<{
   +$data?: Home_people$data,
   +$fragmentRefs: Home_people$ref,
-};
+}>;
 */
 
 
