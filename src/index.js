@@ -9,7 +9,7 @@ import path from 'path';
 
 import type { GraphQLSchema } from 'graphql';
 import type { Compiler, Compilation } from 'webpack';
-import getSchema from './getSchema';
+import getSchemaSource from './getSchemaSource';
 import getWriter from './getWriter';
 import getFilepathsFromGlob from './getFilepathsFromGlob';
 import getRelayCompilerPluginHooks from './getRelayCompilerPluginHooks';
@@ -50,7 +50,7 @@ function createParserConfigs({
   exclude: Array<string>,
   extensions: Array<string>
 }) {
-  const schemaFn = typeof schema === 'string' ? () => getSchema(schema) : () => schema;
+  const schemaSource = getSchemaSource(schema);
 
   const sourceModuleParser = RelaySourceModuleParser(
     languagePlugin.findGraphQLTags,
@@ -63,13 +63,13 @@ function createParserConfigs({
       baseDir,
       getFileFilter: sourceModuleParser.getFileFilter,
       getParser: getParser || sourceModuleParser.getParser,
-      getSchema: schemaFn,
+      getSchemaSource: () => schemaSource,
       filepaths: getFilepathsFromGlob(baseDir, fileOptions),
     },
     graphql: {
       baseDir,
       getParser: DotGraphQLParser.getParser,
-      getSchema: schemaFn,
+      getSchemaSource: () => schemaSource,
       filepaths: getFilepathsFromGlob(baseDir, {
         ...fileOptions,
         extensions: ['graphql'],
