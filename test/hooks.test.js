@@ -4,27 +4,35 @@ import webpack from 'webpack'
 import path from 'path'
 import rimraf from 'rimraf'
 import RelayCompilerWebpackPlugin from '../src/index'
-import createWebpackConfig from './fixtures/normalCase/createWebpackConfig'
 import normaliseConfigForWebpackVersion from './support/normaliseConfigForWebpackVersion'
+import createTempFixtureProject from './support/createTempFixtureProject'
+import { removeSync } from 'fs-extra'
 
 jest.setTimeout(30000)
 
 const DEFAULT_NODE_ENV = process.env.NODE_ENV
 
 describe('RelayCompilerWebpackPlugin', () => {
-  const normalCaseDir = path.resolve(__dirname, 'fixtures', 'normalCase')
-  const srcDir = path.resolve(normalCaseDir, 'src')
+  let fixtureDir
+  let createWebpackConfig
+  let srcDir
 
-  beforeEach(done => {
-    rimraf(srcDir + '/**/__generated__/**', done)
+  beforeEach(() => {
     process.env.NODE_ENV = DEFAULT_NODE_ENV
+    fixtureDir = createTempFixtureProject('hooks')
+    createWebpackConfig = require(fixtureDir + '/createWebpackConfig')
+    srcDir = path.join(fixtureDir, 'src')
   })
 
-  it('Calls hoooks appropriately', done => {
+  afterEach(() => {
+    removeSync(fixtureDir)
+  })
+
+  it('Calls hooks appropriately', done => {
     const beforeWriteSpy = jest.fn()
     const afterWriteSpy = jest.fn()
     const relayCompilerWebpackPlugin = new RelayCompilerWebpackPlugin({
-      schema: path.resolve(normalCaseDir, 'schema.json'),
+      schema: path.resolve(fixtureDir, 'schema.json'),
       src: srcDir
     })
 

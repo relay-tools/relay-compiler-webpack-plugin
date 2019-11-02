@@ -3,12 +3,27 @@
 import path from 'path'
 import RelayCompilerWebpackPlugin from '../src/index'
 import normaliseConfigForWebpackVersion from './support/normaliseConfigForWebpackVersion'
-import createWebpackConfig from './fixtures/normalCase/createWebpackConfig'
 import webpack from 'webpack'
+import createTempFixtureProject from './support/createTempFixtureProject'
+import { removeSync } from 'fs-extra'
 
 jest.setTimeout(20000)
 
 describe('RelayCompilerWebpackPlugin', () => {
+  let fixtureDir
+  let createWebpackConfig
+  let srcDir
+
+  beforeEach(() => {
+    fixtureDir = createTempFixtureProject('invalidArgs')
+    createWebpackConfig = require(fixtureDir + '/createWebpackConfig')
+    srcDir = path.join(fixtureDir, 'src')
+  })
+
+  afterEach(() => {
+    removeSync(fixtureDir)
+  })
+
   it('throws if an empty constructor', () => {
     expect(() => new RelayCompilerWebpackPlugin()).toThrow(
       'You must provide options to RelayCompilerWebpackPlugin.'
@@ -16,19 +31,15 @@ describe('RelayCompilerWebpackPlugin', () => {
   })
 
   it("throws if the schema isn't found", () => {
-    const fixtureDir = path.join(__dirname, 'fixtures', 'normalCase')
-    const src = path.join(fixtureDir, 'src')
     const schema = path.join(fixtureDir, 'schema-doesnt-exist.json')
 
-    expect(() => new RelayCompilerWebpackPlugin({ schema, src })).toThrow(
+    expect(() => new RelayCompilerWebpackPlugin({ schema, src: srcDir })).toThrow(
       `Could not find the [schema] provided (${schema})`
     )
   })
 
   it('throws if no schema provided', () => {
-    const src = path.join(__dirname, 'fixtures', 'normalCase', 'src')
-
-    expect(() => new RelayCompilerWebpackPlugin({ src })).toThrow(
+    expect(() => new RelayCompilerWebpackPlugin({ src: srcDir })).toThrow(
       'You must provide a Relay Schema.'
     )
   })
@@ -37,10 +48,9 @@ describe('RelayCompilerWebpackPlugin', () => {
     const webpackConfig = normaliseConfigForWebpackVersion(
       createWebpackConfig({ RelayCompilerWebpackPlugin })
     )
-    const fixtureDir = path.resolve(__dirname, 'fixtures', 'normalCase')
     webpackConfig.plugins = [
       new RelayCompilerWebpackPlugin({
-        src: path.resolve(fixtureDir, 'src'),
+        src: srcDir,
         schema: path.resolve(__dirname, '..', 'package.json')
       })
     ]
@@ -63,7 +73,7 @@ describe('RelayCompilerWebpackPlugin', () => {
   })
 
   it('throws if no src provided', () => {
-    const schema = path.join(__dirname, 'fixtures', 'normalCase', 'schema.json')
+    const schema = path.join(fixtureDir, 'schema.json')
 
     expect(() => new RelayCompilerWebpackPlugin({ schema })).toThrow(
       'You must provide a Relay `src` path.'
@@ -71,7 +81,6 @@ describe('RelayCompilerWebpackPlugin', () => {
   })
 
   it("throws if source isn't found", () => {
-    const fixtureDir = path.join(__dirname, 'fixtures', 'normalCase')
     const src = path.join(fixtureDir, 'src-doesnt-exist')
     const schema = path.join(fixtureDir, 'schema.json')
 

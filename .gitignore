@@ -1,5 +1,4 @@
 node_modules
-/test/fixtures/**/dist/
-/test/fixtures/**/__generated__/
+/test/temp
 /reports
 .DS_Store

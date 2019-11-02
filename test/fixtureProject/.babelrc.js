@@ -1,9 +1,11 @@
-{
+const path = require('path')
+
+module.exports = {
   "env": {
     "artifactDirectoryTest": {
       "plugins": [
         ["relay", {
-          "artifactDirectory": "test/fixtures/normalCase/src/__generated__"
+          "artifactDirectory": path.resolve(__dirname, "src", "__generated__")
         }]
       ],
     }

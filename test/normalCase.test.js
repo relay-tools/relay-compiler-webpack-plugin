@@ -3,28 +3,35 @@
 import webpack from 'webpack'
 import fs from 'fs'
 import path from 'path'
-import rimraf from 'rimraf'
 import RelayCompilerWebpackPlugin from '../src/index'
-import createWebpackConfig from './fixtures/normalCase/createWebpackConfig'
 import normaliseConfigForWebpackVersion from './support/normaliseConfigForWebpackVersion'
+import createTempFixtureProject from './support/createTempFixtureProject'
+import { removeSync } from 'fs-extra'
 
+// TODO: Move to jest setupTests or something like that
 jest.setTimeout(30000)
 
 const DEFAULT_NODE_ENV = process.env.NODE_ENV
 
 describe('RelayCompilerWebpackPlugin', () => {
-  const normalCaseDir = path.resolve(__dirname, 'fixtures', 'normalCase')
-  const srcDir = path.resolve(normalCaseDir, 'src')
+  let fixtureDir
+  let createWebpackConfig
 
-  beforeEach(done => {
-    rimraf(srcDir + '/**/__generated__/**', done)
+  beforeEach(() => {
     process.env.NODE_ENV = DEFAULT_NODE_ENV
+    fixtureDir = createTempFixtureProject('normalCase')
+    createWebpackConfig = require(fixtureDir + '/createWebpackConfig')
+  })
+
+  afterEach(() => {
+    process.env.NODE_ENV = DEFAULT_NODE_ENV
+    removeSync(fixtureDir)
   })
 
   it('generates graphql files correctly for a normal example', done => {
     const relayCompilerWebpackPlugin = new RelayCompilerWebpackPlugin({
-      schema: path.resolve(normalCaseDir, 'schema.json'),
-      src: srcDir
+      schema: path.resolve(fixtureDir, 'schema.json'),
+      src: path.resolve(fixtureDir, 'src')
     })
 
     const webpackConfig = normaliseConfigForWebpackVersion(
@@ -37,40 +44,36 @@ describe('RelayCompilerWebpackPlugin', () => {
       expect(stats.compilation.warnings).toHaveLength(0)
 
       const expectedFiles = [
-        path.resolve(
-          srcDir,
+        path.join(
           'mutations',
           '__generated__',
           'updateFirstNameMutation.graphql.js'
         ),
-        path.resolve(
-          srcDir,
+        path.join(
           'components',
           '__generated__',
           'HomeItem_person.graphql.js'
         ),
-        path.resolve(
-          srcDir,
+        path.join(
           'components',
           '__generated__',
           'Home_people.graphql.js'
         ),
-        path.resolve(
-          srcDir,
+        path.join(
           'components',
           '__generated__',
           'AppQuery.graphql.js'
         ),
-        path.resolve(
-          srcDir,
+        path.join(
           'components',
           '__generated__',
           'AboutQuery.graphql.js'
         )
       ]
-      expectedFiles.forEach(generatedFilepath => {
-        expect(fs.existsSync(generatedFilepath)).toBe(true)
-        expect(fs.readFileSync(generatedFilepath, 'utf8')).toMatchSnapshot()
+      expectedFiles.forEach(generatedSrcPath => {
+        const absPath = path.resolve(fixtureDir, 'src', generatedSrcPath)
+        expect(fs.existsSync(absPath)).toBe(true)
+        expect(fs.readFileSync(absPath, 'utf8')).toMatchSnapshot()
       })
 
       done()
@@ -78,18 +81,17 @@ describe('RelayCompilerWebpackPlugin', () => {
   })
 
   it('generates graphql files correctly for a normal example with --artifactDirectory option', done => {
-    process.env.NODE_ENV = 'artifactDirectoryTest'
-
     const relayCompilerWebpackPlugin = new RelayCompilerWebpackPlugin({
-      schema: path.resolve(normalCaseDir, 'schema.json'),
-      src: path.resolve(normalCaseDir, 'src'),
-      artifactDirectory: path.resolve(normalCaseDir, 'src', '__generated__')
+      schema: path.resolve(fixtureDir, 'schema.json'),
+      src: path.resolve(fixtureDir, 'src'),
+      artifactDirectory: path.resolve(fixtureDir, 'src', '__generated__')
     })
 
     const webpackConfig = normaliseConfigForWebpackVersion(
       createWebpackConfig({ relayCompilerWebpackPlugin })
     )
 
+    process.env.NODE_ENV = 'artifactDirectoryTest'
     webpack(webpackConfig, (err, stats) => {
       expect(err).toBeFalsy()
       if (stats.compilation.logging) {
@@ -100,17 +102,16 @@ describe('RelayCompilerWebpackPlugin', () => {
       expect(stats.compilation.warnings).toHaveLength(0)
 
       const expectedFiles = [
-        path.resolve(
-          srcDir,
-          '__generated__',
-          'updateFirstNameMutation.graphql.js'
-        ),
-        path.resolve(srcDir, '__generated__', 'HomeItem_person.graphql.js'),
-        path.resolve(srcDir, '__generated__', 'Home_people.graphql.js'),
-        path.resolve(srcDir, '__generated__', 'AppQuery.graphql.js'),
-        path.resolve(srcDir, '__generated__', 'AboutQuery.graphql.js')
+        'updateFirstNameMutation.graphql.js',
+        'HomeItem_person.graphql.js',
+        'Home_people.graphql.js',
+        'AppQuery.graphql.js',
+        'AboutQuery.graphql.js'
       ]
-      expectedFiles.forEach(generatedFilepath => {
+      expectedFiles.forEach(fileName => {
+        const generatedFilepath = path.resolve(
+          fixtureDir, 'src', '__generated__', fileName
+        )
         expect(fs.existsSync(generatedFilepath)).toBe(true)
         expect(fs.readFileSync(generatedFilepath, 'utf8')).toMatchSnapshot()
       })

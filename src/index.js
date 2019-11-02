@@ -12,16 +12,9 @@ import type { Compiler, Compilation } from 'webpack';
 import getSchema from './getSchema';
 import getWriter from './getWriter';
 import getFilepathsFromGlob from './getFilepathsFromGlob';
-
-import getSchema from './getSchema'
-import getWriter from './getWriter'
-import getFilepathsFromGlob from './getFilepathsFromGlob'
-import { getRelayCompilerPluginHooks } from './hooks'
-
-import type { GraphQLSchema } from 'graphql'
-import type { Compiler, Compilation } from 'webpack'
-import type { WriterConfig } from './getWriter'
-import type { PluginHooks } from './hooks'
+import getRelayCompilerPluginHooks from './getRelayCompilerPluginHooks';
+import type { WriterConfig } from './getWriter';
+import type { PluginHooks } from './getRelayCompilerPluginHooks';
 import type { WebpackLogger } from './WebpackLogger';
 import createRaiseErrorsReporter from './createRaiseErrorsReporter';
 
@@ -96,7 +89,7 @@ class RelayCompilerWebpackPlugin {
 
   static getHooks = getRelayCompilerPluginHooks
 
-  constructor (options: RelayCompilerWebpackPluginOptions) {
+  constructor(options: RelayCompilerWebpackPluginOptions) {
     if (!options) {
       throw new Error('You must provide options to RelayCompilerWebpackPlugin.');
     }
@@ -150,7 +143,12 @@ class RelayCompilerWebpackPlugin {
     };
   }
 
-  async compile (issuer: string, request: string, hooks: PluginHooks) {
+  async compile(
+    issuer: string,
+    request: string,
+    compilation: Compilation,
+    hooks: PluginHooks,
+  ): Promise<void> {
     let logger;
 
     // webpack 4.38+
@@ -161,37 +159,28 @@ class RelayCompilerWebpackPlugin {
     const reporter = this.options.getReporter
       ? this.options.getReporter(logger)
       : createRaiseErrorsReporter(logger);
-    
-    const errors = []
-    try {
-      // Can this be set up in constructor and use same instance every time?
-      const runner = new Runner({
-        parserConfigs: this.parserConfigs,
-        writerConfigs: this.writerConfigs,
-        reporter,
-        onlyValidate: false,
-        skipPersist: true
-      })
 
-      return hooks.beforeWrite.promise()
-        .then(() => runner.compile(this.languagePlugin.outputExtension))
-        .then(compileResult => hooks.afterWrite.promise(compileResult))
-    } catch (error) {
-      errors.push(error)
-    }
-    
-    if (errors.length > 0) {
-      throw errors[0];
-    }
+    // Can this be set up in constructor and use same instance every time?
+    const runner = new Runner({
+      parserConfigs: this.parserConfigs,
+      writerConfigs: this.writerConfigs,
+      reporter,
+      onlyValidate: false,
+      skipPersist: true,
+    });
+
+    return hooks.beforeWrite.promise()
+      .then(() => runner.compile(this.languagePlugin.outputExtension))
+      .then((compileResult) => hooks.afterWrite.promise(compileResult));
   }
 
-  cachedCompiler (compilation: Compilation) {
-    const hooks = getRelayCompilerPluginHooks(compilation)
-    let result
+  cachedCompiler(compilation: Compilation) {
+    const hooks = getRelayCompilerPluginHooks(compilation);
+    let result;
     return (issuer: string, request: string) => {
-      if (!result) result = this.compile(issuer, request, hooks)
-      return result
-    }
+      if (!result) result = this.compile(issuer, request, compilation, hooks);
+      return result;
+    };
   }
 
   runCompile(
@@ -269,7 +258,7 @@ class RelayCompilerWebpackPlugin {
       compiler.hooks.compilation.tap(
         'RelayCompilerWebpackPlugin',
         (compilation: Compilation, params) => {
-          const compile = this.cachedCompiler(compilation)
+          const compile = this.cachedCompiler(compilation);
           params.normalModuleFactory.hooks.beforeResolve.tapAsync(
             'RelayCompilerWebpackPlugin',
             (result, callback) => {
@@ -280,7 +269,7 @@ class RelayCompilerWebpackPlugin {
       );
     } else {
       compiler.plugin('compilation', (compilation: Compilation, params) => {
-        const compile = this.cachedCompiler(compilation)
+        const compile = this.cachedCompiler(compilation);
         params.normalModuleFactory.plugin(
           'before-resolve',
           (result, callback) => {
