@@ -64,7 +64,7 @@ describe('RelayCompilerWebpackPlugin', () => {
         .forEach(message =>
           expect(message).toEqual(
             expect.stringContaining(
-              'Error loading schema. Expected the schema to be a .graphql or a .json'
+              'Error: Invalid or incomplete introspection result.'
             )
           )
         )

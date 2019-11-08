@@ -1,7 +1,7 @@
 // @flow
 
+import { FileWriter, IRTransforms } from 'relay-compiler';
 import type { WriteFilesOptions } from 'relay-compiler';
-import { FileWriter, IRTransforms } from 'relay-compiler/lib';
 
 export type WriterConfig = {
   outputDir?: string,
@@ -17,6 +17,7 @@ const {
   schemaExtensions,
 } = IRTransforms;
 
+// Taken from relay-compiler/bin/RelayCompilerMain.js
 export default (languagePlugin: any, config: WriterConfig) => ({
   onlyValidate,
   schema,

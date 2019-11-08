@@ -291,7 +291,7 @@ module.exports = node;
 exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example 4`] = `
 "/**
  * @flow
- * @relayHash 1f3a698b50e70fa403d4b3d64a141bb3
+ * @relayHash d299eee1fc201946b5e3b7ea7f83bb73
  */
 
 /* eslint-disable */
@@ -322,14 +322,14 @@ query AppQuery {
   }
 }
 
-fragment Home_people on Person {
-  id
-  ...HomeItem_person
-}
-
 fragment HomeItem_person on Person {
   id
   fullName
+}
+
+fragment Home_people on Person {
+  id
+  ...HomeItem_person
 }
 */
 
@@ -396,7 +396,7 @@ const node/*: ConcreteRequest*/ = {
     \\"operationKind\\": \\"query\\",
     \\"name\\": \\"AppQuery\\",
     \\"id\\": null,
-    \\"text\\": \\"query AppQuery {\\\\n  people {\\\\n    ...Home_people\\\\n    id\\\\n  }\\\\n}\\\\n\\\\nfragment Home_people on Person {\\\\n  id\\\\n  ...HomeItem_person\\\\n}\\\\n\\\\nfragment HomeItem_person on Person {\\\\n  id\\\\n  fullName\\\\n}\\\\n\\",
+    \\"text\\": \\"query AppQuery {\\\\n  people {\\\\n    ...Home_people\\\\n    id\\\\n  }\\\\n}\\\\n\\\\nfragment HomeItem_person on Person {\\\\n  id\\\\n  fullName\\\\n}\\\\n\\\\nfragment Home_people on Person {\\\\n  id\\\\n  ...HomeItem_person\\\\n}\\\\n\\",
     \\"metadata\\": {}
   }
 };
@@ -818,7 +818,7 @@ module.exports = node;
 exports[`RelayCompilerWebpackPlugin generates graphql files correctly for a normal example with --artifactDirectory option 4`] = `
 "/**
  * @flow
- * @relayHash 254d1a2ec000a09fb84ac4b3336beb67
+ * @relayHash ae570241219ec7981a375a9d6bb66a2c
  */
 
 /* eslint-disable */
@@ -849,14 +849,14 @@ query AppQuery {
   }
 }
 
-fragment Home_people on Person {
-  id
-  ...HomeItem_person
-}
-
 fragment HomeItem_person on Person {
   id
   fullName
+}
+
+fragment Home_people on Person {
+  id
+  ...HomeItem_person
 }
 */
 
@@ -923,7 +923,7 @@ const node/*: ConcreteRequest*/ = {
     \\"operationKind\\": \\"query\\",
     \\"name\\": \\"AppQuery\\",
     \\"id\\": null,
-    \\"text\\": \\"query AppQuery {\\\\n  people {\\\\n    ...Home_people\\\\n    id\\\\n  }\\\\n}\\\\n\\\\nfragment Home_people on Person {\\\\n  id\\\\n  ...HomeItem_person\\\\n}\\\\n\\\\nfragment HomeItem_person on Person {\\\\n  id\\\\n  fullName\\\\n}\\\\n\\",
+    \\"text\\": \\"query AppQuery {\\\\n  people {\\\\n    ...Home_people\\\\n    id\\\\n  }\\\\n}\\\\n\\\\nfragment HomeItem_person on Person {\\\\n  id\\\\n  fullName\\\\n}\\\\n\\\\nfragment Home_people on Person {\\\\n  id\\\\n  ...HomeItem_person\\\\n}\\\\n\\",
     \\"metadata\\": {}
   }
 };
