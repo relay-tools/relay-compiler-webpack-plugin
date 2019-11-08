@@ -10,7 +10,7 @@ var _fs = _interopRequireDefault(require("fs"));
 
 var _path = _interopRequireDefault(require("path"));
 
-var _getSchema = _interopRequireDefault(require("./getSchema"));
+var _getSchemaSource = _interopRequireDefault(require("./getSchemaSource"));
 
 var _getWriter = _interopRequireDefault(require("./getWriter"));
 
@@ -28,6 +28,10 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+const {
+  schemaExtensions
+} = _relayCompiler.IRTransforms;
+
 function createParserConfigs({
   baseDir,
   getParser,
@@ -38,7 +42,6 @@ function createParserConfigs({
   schema,
   extensions
 }) {
-  const schemaFn = typeof schema === 'string' ? () => (0, _getSchema.default)(schema) : () => schema;
   const sourceModuleParser = (0, _RelaySourceModuleParser.default)(languagePlugin.findGraphQLTags);
   const fileOptions = {
     extensions,
@@ -50,13 +53,15 @@ function createParserConfigs({
       baseDir,
       getFileFilter: sourceModuleParser.getFileFilter,
       getParser: getParser || sourceModuleParser.getParser,
-      getSchema: schemaFn,
+      getSchemaSource: () => (0, _getSchemaSource.default)(schema),
+      schemaExtensions,
       filepaths: (0, _getFilepathsFromGlob.default)(baseDir, fileOptions)
     },
     graphql: {
       baseDir,
       getParser: _relayCompiler.DotGraphQLParser.getParser,
-      getSchema: schemaFn,
+      getSchemaSource: () => (0, _getSchemaSource.default)(schema),
+      schemaExtensions,
       filepaths: (0, _getFilepathsFromGlob.default)(baseDir, _objectSpread({}, fileOptions, {
         extensions: ['graphql']
       }))

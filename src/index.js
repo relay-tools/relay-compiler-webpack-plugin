@@ -1,5 +1,6 @@
 // @flow
-import { Runner, DotGraphQLParser } from 'relay-compiler';
+
+import { DotGraphQLParser, IRTransforms, Runner } from 'relay-compiler';
 import RelayLanguagePluginJavaScript from 'relay-compiler/lib/language/javascript/RelayLanguagePluginJavaScript';
 import type { PluginInterface } from 'relay-compiler/lib/language/RelayLanguagePluginInterface';
 import RelaySourceModuleParser from 'relay-compiler/lib/core/RelaySourceModuleParser';
@@ -7,9 +8,8 @@ import RelaySourceModuleParser from 'relay-compiler/lib/core/RelaySourceModulePa
 import fs from 'fs';
 import path from 'path';
 
-import type { GraphQLSchema } from 'graphql';
 import type { Compiler, Compilation } from 'webpack';
-import getSchema from './getSchema';
+import getSchemaSource from './getSchemaSource';
 import getWriter from './getWriter';
 import getFilepathsFromGlob from './getFilepathsFromGlob';
 import getRelayCompilerPluginHooks from './getRelayCompilerPluginHooks';
@@ -18,17 +18,19 @@ import type { PluginHooks } from './getRelayCompilerPluginHooks';
 import type { WebpackLogger } from './WebpackLogger';
 import createRaiseErrorsReporter from './createRaiseErrorsReporter';
 
+const { schemaExtensions } = IRTransforms;
+
 type RelayCompilerWebpackPluginOptions = {
-    schema: string | GraphQLSchema,
-    src: string,
-    getParser?: Function,
-    extensions: Array<string>,
-    include: Array<string>,
-    exclude: Array<string>,
-    languagePlugin?: () => PluginInterface,
-    artifactDirectory?: string,
-    getReporter?: (logger?: WebpackLogger) => any,
-    config: any
+  schema: string,
+  src: string,
+  getParser?: Function,
+  extensions: Array<string>,
+  include: Array<string>,
+  exclude: Array<string>,
+  languagePlugin?: () => PluginInterface,
+  artifactDirectory?: string,
+  getReporter?: (logger?: WebpackLogger) => any,
+  config: any
 }
 
 function createParserConfigs({
@@ -45,13 +47,11 @@ function createParserConfigs({
   getParser?: Function,
   sourceParserName: string,
   languagePlugin: PluginInterface,
-  schema: string | GraphQLSchema,
+  schema: string,
   include: Array<string>,
   exclude: Array<string>,
   extensions: Array<string>
 }) {
-  const schemaFn = typeof schema === 'string' ? () => getSchema(schema) : () => schema;
-
   const sourceModuleParser = RelaySourceModuleParser(
     languagePlugin.findGraphQLTags,
   );
@@ -63,13 +63,15 @@ function createParserConfigs({
       baseDir,
       getFileFilter: sourceModuleParser.getFileFilter,
       getParser: getParser || sourceModuleParser.getParser,
-      getSchema: schemaFn,
+      getSchemaSource: () => getSchemaSource(schema),
+      schemaExtensions,
       filepaths: getFilepathsFromGlob(baseDir, fileOptions),
     },
     graphql: {
       baseDir,
       getParser: DotGraphQLParser.getParser,
-      getSchema: schemaFn,
+      getSchemaSource: () => getSchemaSource(schema),
+      schemaExtensions,
       filepaths: getFilepathsFromGlob(baseDir, {
         ...fileOptions,
         extensions: ['graphql'],
