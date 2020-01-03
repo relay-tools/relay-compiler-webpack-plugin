@@ -33,7 +33,7 @@
     "test:coverage": "jest test --env node --coverage --coverageDirectory ./reports src",
     "compile": "babel src --out-dir dist",
     "build": "npm-run-all --parallel flow lint:check test --sequential compile",
-    "prepublishOnly": "yarn clean && yarn build"
+    "prepublishOnly": "run-s clean build"
   },
   "peerDependencies": {
     "relay-compiler": "^8.0.0",
