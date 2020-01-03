@@ -27,8 +27,8 @@ export default (languagePlugin: any, config: WriterConfig) => ({
   reporter,
 }: WriteFilesOptions) => FileWriter.writeAll({
   config: {
-    customScalars: {},
     ...config,
+    customScalars: {},
     compilerTransforms: {
       commonTransforms,
       codegenTransforms,
