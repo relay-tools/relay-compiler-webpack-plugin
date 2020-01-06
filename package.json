@@ -1,6 +1,6 @@
 {
   "name": "relay-compiler-webpack-plugin",
-  "version": "8.0.0",
+  "version": "8.0.1",
   "description": "Automatically run the Relay Compiler from Webpack",
   "keywords": [
     "relay",
@@ -51,6 +51,7 @@
     "@babel/preset-env": "^7.7.1",
     "@babel/preset-flow": "^7.0.0",
     "@babel/preset-react": "^7.7.0",
+    "@types/relay-compiler": "^7.0.2",
     "@types/tapable": "^1.0.4",
     "@types/webpack": "^4.39.8",
     "babel-core": "^7.0.0-bridge.0",

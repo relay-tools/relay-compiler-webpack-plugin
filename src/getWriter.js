@@ -5,7 +5,8 @@ import type { WriteFilesOptions } from 'relay-compiler';
 
 export type WriterConfig = {
   outputDir?: string,
-  baseDir: string
+  baseDir: string,
+  customScalars?: any
 }
 
 const {
@@ -27,8 +28,8 @@ export default (languagePlugin: any, config: WriterConfig) => ({
   reporter,
 }: WriteFilesOptions) => FileWriter.writeAll({
   config: {
-    ...config,
     customScalars: {},
+    ...config,
     compilerTransforms: {
       commonTransforms,
       codegenTransforms,
