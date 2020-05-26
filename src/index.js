@@ -9,6 +9,7 @@ import fs from 'fs';
 import path from 'path';
 
 import type { Compiler, Compilation } from 'webpack';
+import { version } from 'webpack';
 import getSchemaSource from './getSchemaSource';
 import getWriter from './getWriter';
 import getFilepathsFromGlob from './getFilepathsFromGlob';
@@ -32,6 +33,8 @@ type RelayCompilerWebpackPluginOptions = {
   getReporter?: (logger?: WebpackLogger) => any,
   config: any
 }
+
+const isWebpack5 = parseInt(version, 10) === 5;
 
 function createParserConfigs({
   baseDir,
@@ -190,6 +193,8 @@ class RelayCompilerWebpackPlugin {
     result: any,
     callback: (error: Error | null, value: string | typeof undefined) => void,
   ) {
+    const passResult = isWebpack5 ? undefined : result;
+
     if (
       result
       && result.contextInfo.issuer
@@ -201,18 +206,18 @@ class RelayCompilerWebpackPlugin {
       );
 
       if (this.options.artifactDirectory && !request.startsWith(this.options.artifactDirectory)) {
-        callback(null, result);
+        callback(null, passResult);
         return;
       }
 
       compile(result.contextInfo.issuer, request)
-        .then(() => callback(null, result))
+        .then(() => callback(null, passResult))
         .catch((error) => callback(error));
 
       return;
     }
 
-    callback(null, result);
+    callback(null, passResult);
   }
 
   apply(compiler: Compiler) {
