@@ -10,16 +10,12 @@ jobs:
     strategy:
       matrix:
         webpack_version: [3, 4]
-        node_version: [10, 11, 12]
+        node_version: [10, 12]
 
     runs-on: ubuntu-18.04
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.6
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
