@@ -30,9 +30,9 @@ var _default = (languagePlugin, config) => ({
   sourceControl,
   reporter
 }) => _relayCompiler.FileWriter.writeAll({
-  config: _objectSpread({
+  config: _objectSpread(_objectSpread({
     customScalars: {}
-  }, config, {
+  }, config), {}, {
     compilerTransforms: {
       commonTransforms,
       codegenTransforms,
