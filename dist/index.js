@@ -10,6 +10,8 @@ var _fs = _interopRequireDefault(require("fs"));
 
 var _path = _interopRequireDefault(require("path"));
 
+var _webpack = require("webpack");
+
 var _getSchemaSource = _interopRequireDefault(require("./getSchemaSource"));
 
 var _getWriter = _interopRequireDefault(require("./getWriter"));
@@ -31,6 +33,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 const {
   schemaExtensions
 } = _relayCompiler.IRTransforms;
+const isWebpack5 = parseInt(_webpack.version, 10) === 5;
 
 function createParserConfigs({
   baseDir,
@@ -156,19 +159,21 @@ class RelayCompilerWebpackPlugin {
   }
 
   runCompile(compile, result, callback) {
+    const passResult = isWebpack5 ? undefined : result;
+
     if (result && result.contextInfo.issuer && (this.options.artifactDirectory || result.request.match(/__generated__/))) {
       const request = _path.default.resolve(_path.default.dirname(result.contextInfo.issuer), result.request);
 
       if (this.options.artifactDirectory && !request.startsWith(this.options.artifactDirectory)) {
-        callback(null, result);
+        callback(null, passResult);
         return;
       }
 
-      compile(result.contextInfo.issuer, request).then(() => callback(null, result)).catch(error => callback(error));
+      compile(result.contextInfo.issuer, request).then(() => callback(null, passResult)).catch(error => callback(error));
       return;
     }
 
-    callback(null, result);
+    callback(null, passResult);
   }
 
   apply(compiler) {
