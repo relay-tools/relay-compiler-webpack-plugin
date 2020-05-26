@@ -1,4 +1,4 @@
-name: Deploy
+name: Build
 
 on:
   push:
@@ -6,11 +6,11 @@ on:
 
 jobs:
   deploy:
-    name: Deploy ${{ matrix.env }}
+    name: Build on Node ${{ matrix.node_version }}, Webpack ${{ env.webpack_version }}
     strategy:
       matrix:
         webpack_version: [3, 4]
-        node_version: [8, 10, 11, 12]
+        node_version: [10, 11, 12]
 
     runs-on: ubuntu-18.04
 
