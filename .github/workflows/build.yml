@@ -35,3 +35,5 @@ jobs:
           yarn
           yarn remove webpack
           yarn add webpack@${{ env.webpack_version }}
+      - name: Build
+        run: yarn build
