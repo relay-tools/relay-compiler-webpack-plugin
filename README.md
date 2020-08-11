@@ -1,7 +1,8 @@
 # Relay Compiler Webpack Plugin
 
 [![npm version](https://badge.fury.io/js/relay-compiler-webpack-plugin.svg)](https://badge.fury.io/js/relay-compiler-webpack-plugin)
-[![Build Status](https://travis-ci.org/relay-tools/relay-compiler-webpack-plugin.svg?branch=master)](https://travis-ci.org/relay-tools/relay-compiler-webpack-plugin)
+[![Travis Build Status](https://travis-ci.org/relay-tools/relay-compiler-webpack-plugin.svg?branch=master)](https://travis-ci.org/relay-tools/relay-compiler-webpack-plugin)
+![Github Actions Build Status](https://github.com/relay-tools/relay-compiler-webpack-plugin/workflows/Build/badge.svg)
 
 Are you running Relay Modern? Are you annoyed with constantly running the `relay-compiler` to generate code, especially
 if you're already running Webpack?
