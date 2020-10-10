@@ -24,6 +24,7 @@ files for you.
   2. Add the plugin to your Webpack configuration:
 
 ```javascript
+// const RelayCompilerLanguageTypescript = require('relay-compiler-language-typescript').default
 const RelayCompilerWebpackPlugin = require('relay-compiler-webpack-plugin')
 const path = require('path')
 
@@ -32,6 +33,7 @@ module.exports = {
   plugins: [
     // ...
     new RelayCompilerWebpackPlugin({
+      // languagePlugin: RelayCompilerLanguageTypescript,
       schema: path.resolve(__dirname, './relative/path/to/schema.graphql'), // or schema.json
       src: path.resolve(__dirname, './relative/path/to/source/files'),
     })
@@ -39,6 +41,7 @@ module.exports = {
   // ...
 }
 ```
+Note: TypeScript projects also needs to add the TypeScript language plugin as shown in the commented out lines in the above snippet.
 
   3. :tada:
 
