@@ -1,7 +1,7 @@
 // @flow
 
-import type { Compilation } from 'webpack';
 import { AsyncSeriesWaterfallHook } from 'tapable';
+import type { Compilation } from 'webpack';
 
 const relayCompilerPluginHooksMap = new WeakMap();
 

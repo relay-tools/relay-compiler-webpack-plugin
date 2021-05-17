@@ -16,9 +16,9 @@ files for you.
   1. Add this to your project:
 
 ```sh
-  yarn add --dev relay-compiler-webpack-plugin
+  yarn add --dev relay-compiler-webpack-plugin graphql
   # Or if you're using npm
-  npm install --save-dev relay-compiler-webpack-plugin
+  npm install --save-dev relay-compiler-webpack-plugin graphql
 ```
 
   2. Add the plugin to your Webpack configuration:

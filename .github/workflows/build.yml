@@ -9,8 +9,8 @@ jobs:
     name: Build on Node ${{ matrix.node_version }}, Webpack ${{ matrix.webpack_version }}
     strategy:
       matrix:
-        webpack_version: [3, 4]
-        node_version: [10, 12]
+        webpack_version: [3, 4, 5]
+        node_version: [10, 12, 14, 15, 16]
 
     runs-on: ubuntu-18.04
 

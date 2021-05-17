@@ -2,14 +2,14 @@
 
 import { DotGraphQLParser, IRTransforms, Runner } from 'relay-compiler';
 import RelayLanguagePluginJavaScript from 'relay-compiler/lib/language/javascript/RelayLanguagePluginJavaScript';
-import type { PluginInterface } from 'relay-compiler/lib/language/RelayLanguagePluginInterface';
 import RelaySourceModuleParser from 'relay-compiler/lib/core/RelaySourceModuleParser';
 
 import fs from 'fs';
 import path from 'path';
 
-import type { Compiler, Compilation } from 'webpack';
 import { version } from 'webpack';
+import type { Compiler, Compilation } from 'webpack';
+import type { PluginInterface } from 'relay-compiler/lib/language/RelayLanguagePluginInterface';
 import getSchemaSource from './getSchemaSource';
 import getWriter from './getWriter';
 import getFilepathsFromGlob from './getFilepathsFromGlob';
