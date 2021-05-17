@@ -102,5 +102,3 @@ yarn test:coverage
 ## License
 
 Relay Compiler Webpack Plugin may be redistributed according to the [BSD 3-Clause License](LICENSE).
-
-Copyright 2019
